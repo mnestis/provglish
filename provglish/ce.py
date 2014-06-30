@@ -1,3 +1,5 @@
+import inflect
+
 class Sentence():
     
     def __init__(self, subject, relationships):
@@ -5,8 +7,10 @@ class Sentence():
         self.relationships = relationships
     
     def __str__(self):
+        nl = inflect.engine()
+        
         if self.relationships == []:
-            return "There is a %s <%s>" % (self.subject["class"], self.subject["uri"])
+            return "There is %s <%s>" % (nl.a(self.subject["class"]), self.subject["uri"])
         else:
             ce_string = "The %s <%s> " % (self.subject["class"], self.subject["uri"])
             
@@ -27,6 +31,8 @@ def parse(filename, file_format):
     return graph
 
 def convert_graph(graph):
+    nl = inflect.engine()
+    
     things = graph.query("""SELECT DISTINCT ?provThing ?class WHERE { ?provThing a ?class . FILTER regex(str(?class), "^http://www.w3.org/ns/prov#") }""")
     
     for subject_URI, subject_class_URI in things:
@@ -35,7 +41,7 @@ def convert_graph(graph):
         subject_class_URI = str(subject_class_URI)
         subject_class = CE.classes[subject_class_URI]
         
-        print "There is a %s %s." % (subject_class, subject_URI)
+        print "There is %s %s." % (nl.a(subject_class), subject_URI)
         
         properties = graph.query("""SELECT DISTINCT ?relationship ?object ?object_class WHERE { <%s> ?relationship ?object . OPTIONAL { ?object a ?object_class} . FILTER (?relationship != rdf:type) }""" % (subject_URI,))
         
