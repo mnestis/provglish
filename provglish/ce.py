@@ -1,27 +1,5 @@
 import inflect
 
-class Sentence():
-    
-    def __init__(self, subject, relationships):
-        self.subject = subject
-        self.relationships = relationships
-    
-    def __str__(self):
-        nl = inflect.engine()
-        
-        if self.relationships == []:
-            return "There is %s <%s>" % (nl.a(self.subject["class"]), self.subject["uri"])
-        else:
-            ce_string = "The %s <%s> " % (self.subject["class"], self.subject["uri"])
-            
-            for relationship in self.relationships[:-1]:
-                ce_string += "%s the %s <%s> and " % (relationship["predicate"], relationship["object_class"], relationship["object_uri"])
-            
-            ce_string += "%s the %s <%s>." % (self.relationships[-1]["predicate"], self.relationships[-1]["object_class"], self.relationships[-1]["object_uri"])
-            
-            return ce_string
-            
-            
 def parse(filename, file_format):
     import rdflib
     
