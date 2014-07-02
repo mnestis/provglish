@@ -12,7 +12,7 @@ def convert_graph(graph):
     import prov
     nl = inflect.engine()
     
-    things = graph.query("""SELECT DISTINCT ?provThing ?class WHERE { ?provThing a ?class . FILTER regex(str(?class), "^http://www.w3.org/ns/prov#") }""")
+    things = graph.query("""SELECT DISTINCT ?provThing ?class WHERE { ?provThing a ?class . FILTER regex(str(?class), "^http://www.w3.org/ns/prov#") } ORDER BY ?provThing""")
     
     for subject_URI, subject_class_URI in things:
         
