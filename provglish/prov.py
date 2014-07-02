@@ -12,3 +12,7 @@ def exists_more_precise(class_URI, subject_URI, graph):
         return True
     else:
         return False
+
+def root_things(graph):
+    roots = graph.query("SELECT DISTINCT ?thing WHERE { ?thing ?x ?y . FILTER NOT EXISTS { ?a ?b ?thing }}")
+    return list([root[0] for root in roots])
