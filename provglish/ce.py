@@ -51,7 +51,7 @@ def convert_graph(graph):
             if object_class_URI != None:
                 object_class = CE.classes[str(object_class_URI)]
             else:
-                object_class = "thing"
+                object_class = "prov thing"
             
             if relationship_URI in CE.simple_predicates:
                 relationship = CE.simple_predicates[relationship_URI]
