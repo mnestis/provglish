@@ -31,11 +31,15 @@ def parse(filename, file_format):
     return graph
 
 def convert_graph(graph):
+    import prov
     nl = inflect.engine()
     
     things = graph.query("""SELECT DISTINCT ?provThing ?class WHERE { ?provThing a ?class . FILTER regex(str(?class), "^http://www.w3.org/ns/prov#") }""")
     
     for subject_URI, subject_class_URI in things:
+        
+        if(prov.exists_more_precise(subject_class_URI, subject_URI, graph)):
+            continue
         
         subject_URI = str(subject_URI)
         subject_class_URI = str(subject_class_URI)
@@ -52,6 +56,9 @@ def convert_graph(graph):
                 object_class = CE.classes[str(object_class_URI)]
             else:
                 object_class = "prov thing"
+                
+            if prov.exists_more_precise(object_class_URI, object_URI, graph):
+                continue
             
             if relationship_URI in CE.simple_predicates:
                 relationship = CE.simple_predicates[relationship_URI]
