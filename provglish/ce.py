@@ -33,7 +33,7 @@ def convert_graph(graph):
             if object_class_URI != None:
                 object_class = CE.classes[str(object_class_URI)]
             else:
-                object_class = "prov thing"
+                object_class = "thing"
                 
             if prov.exists_more_precise(object_class_URI, object_URI, graph):
                 continue
