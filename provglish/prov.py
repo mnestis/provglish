@@ -1,7 +1,9 @@
 import rdflib
 
-prov_graph = rdflib.Graph()
-prov_graph.parse("http://www.w3.org/ns/prov.owl", format="xml")
+
+def load_prov_ontology(graph):
+    graph.parse("http://www.w3.org/ns/prov.owl",format="xml")
+    return graph
 
 def exists_more_precise(class_URI, subject_URI, graph):
     if (prov_graph + graph).query("""SELECT ?morePreciseClass WHERE 
