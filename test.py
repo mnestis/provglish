@@ -5,7 +5,7 @@ from provglish import transform
 from provglish import prov
 
 graph = rdflib.graph.ConjunctiveGraph()
-graph.parse("bravo.ttl",format="turtle", publicID="myGraph")
+graph.parse("bravo.ttl",format="turtle", publicID="prov_graph")
 prov.load_prov_ontology(graph)
 
 bindings = transform.definitions.bindings(graph)

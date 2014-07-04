@@ -45,7 +45,7 @@ class Sentence():
 
 def def_binding(graph):
     results = graph.query("""SELECT ?object ?class WHERE {
-                                GRAPH <myGraph>
+                                GRAPH <prov_graph>
                                 {
                                     ?object a ?class .
                                 }
@@ -57,7 +57,7 @@ def def_coverage(bindings, graph):
         
     results = graph.query("""SELECT ?s ?p ?o WHERE {
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
@@ -66,7 +66,7 @@ def def_coverage(bindings, graph):
                                                     FILTER ( ?o = <%s> )
                                                 } UNION
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
@@ -89,7 +89,7 @@ definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
 
 def prop_binding(graph):
     results = graph.query("""SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
-                                GRAPH <myGraph>
+                                GRAPH <prov_graph>
                                 {
                                     ?thing1 ?relationship ?thing2 . 
                                     FILTER regex( str(?relationship), "^http://www.w3.org/ns/prov#") . 
@@ -107,7 +107,7 @@ def prop_coverage(bindings, graph):
     
     results = graph.query("""SELECT ?s ?p ?o WHERE {
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o
                                                     }
@@ -116,7 +116,7 @@ def prop_coverage(bindings, graph):
                                                     FILTER ( ?o = <%s> ) .
                                                 } UNION
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
@@ -127,7 +127,7 @@ def prop_coverage(bindings, graph):
                                                     FILTER ( ?o = <%s> )
                                                 } UNION
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
@@ -136,7 +136,7 @@ def prop_coverage(bindings, graph):
                                                     FILTER ( ?o = <%s> )
                                                 } UNION
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
@@ -145,7 +145,7 @@ def prop_coverage(bindings, graph):
                                                     FILTER ( ?o = <%s> )
                                                 } UNION
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
@@ -155,7 +155,7 @@ def prop_coverage(bindings, graph):
                                                     FILTER ( ?moreSpecificClass = <%s> )
                                                 } UNION
                                                 {
-                                                    GRAPH <myGraph>
+                                                    GRAPH <prov_graph>
                                                     {
                                                         ?s ?p ?o .
                                                     }
