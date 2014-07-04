@@ -2,9 +2,12 @@ import inflect
 
 def parse(filename, file_format):
     import rdflib
+    import prov
     
-    graph = rdflib.Graph()
-    graph.parse(filename, format=file_format)
+    graph = rdflib.ConjunctiveGraph()
+    graph.parse(filename, format=file_format, publicID="prov_graph")
+
+    prov.load_prov_ontology(graph)
 
     return graph
 

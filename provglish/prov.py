@@ -6,7 +6,7 @@ def load_prov_ontology(graph):
     return graph
 
 def exists_more_precise(class_URI, subject_URI, graph):
-    if (prov_graph + graph).query("""SELECT ?morePreciseClass WHERE 
+    if graph.query("""SELECT ?morePreciseClass WHERE 
                                     { 
                                         ?morePreciseClass <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ <%s> .
                                         <%s> a ?morePreciseClass
