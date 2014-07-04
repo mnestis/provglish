@@ -81,7 +81,7 @@ def def_coverage(bindings, graph):
 
 
 def def_string(bindings):
-    return "There is %s <%s>." % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
+    return "\x1b[32mThere is %s <%s>.\x1b[0m" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
     
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
@@ -176,13 +176,13 @@ def prop_coverage(bindings, graph):
 def prop_string(bindings):
     
     if str(bindings["?relationship"]) in ce.CE.simple_predicates:
-        return "The %s <%s> %s the %s <%s>." % (ce.CE.classes[str(bindings["?thing1_class"])], 
+        return "\x1b[32mThe %s <%s> %s the %s <%s>.\x1b[0m" % (ce.CE.classes[str(bindings["?thing1_class"])], 
                                                 bindings["?thing1"], 
                                                 ce.CE.simple_predicates[str(bindings["?relationship"])], 
                                                 ce.CE.classes[str(bindings["?thing2_class"])],
                                                 bindings["?thing2"])
     else:
-        return "The %s <%s> %s the %s <%s>." % (ce.CE.classes[str(bindings["?thing1_class"])],
+        return "\x1b[32mThe %s <%s> %s the %s <%s>.\x1b[0m" % (ce.CE.classes[str(bindings["?thing1_class"])],
                                                 bindings["?thing1"],
                                                 ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship"])],
                                                 ce.CE.classes[str(bindings["?thing2_class"])],
