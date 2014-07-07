@@ -54,30 +54,22 @@ def def_binding(graph):
     
 def def_coverage(bindings, graph):
     """Takes a single set of bindings and returns the triples that are covered by the template with those bindings."""
+    rdf = rdflib.namespace.RDF    
         
-    results = graph.query("""SELECT ?s ?p ?o WHERE {
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ) .
-                                                    FILTER ( ?o = <%s> )
-                                                } UNION
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    ?s a ?moreSpecificClass .
-                                                    ?moreSpecificClass <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?o .
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?moreSpecificClass = <%s> ) . 
-                                                    FILTER ( ?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> )
-                                                }
-                                            }""" % (bindings["?object"], bindings["?class"], bindings["?object"], bindings["?class"]))
-    return list(results)
+    coverage_list = []
+    
+    # Add the type
+    coverage_list.append((bindings["?object"], rdf.type, bindings["?class"]))
+
+    # Add less specific types
+    q_result = graph.query("""SELECT ?lessSpecificType WHERE {
+                                GRAPH <prov_graph> {
+                                    <%s> a ?lessSpecificType
+                                }
+                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?lessSpecificType
+                            }""" % (bindings["?object"], bindings["?class"]))
+
+    return coverage_list
 
 
 def def_string(bindings):
@@ -105,73 +97,48 @@ def prop_binding(graph):
 def prop_coverage(bindings, graph):
     """Takes a single set of bindings and returns the triples that are covered by the template with those bindings."""
     
-    results = graph.query("""SELECT ?s ?p ?o WHERE {
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o
-                                                    }
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?p = <%s> ) .
-                                                    FILTER ( ?o = <%s> ) .
-                                                } UNION
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    ?s ?moreSpecificProperty ?o .
-                                                    ?moreSpecificProperty <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> ?p .
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?moreSpecificProperty = <%s> ) .
-                                                    FILTER ( ?o = <%s> )
-                                                } UNION
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    FILTER ( ?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ) .
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?o = <%s> )
-                                                } UNION
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    FILTER ( ?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ) .
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?o = <%s> )
-                                                } UNION
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    ?moreSpecificClass <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?o .
-                                                    FILTER ( ?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ) .
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?moreSpecificClass = <%s> )
-                                                } UNION
-                                                {
-                                                    GRAPH <prov_graph>
-                                                    {
-                                                        ?s ?p ?o .
-                                                    }
-                                                    ?moreSpecificClass <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?o .
-                                                    FILTER ( ?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ) .
-                                                    FILTER ( ?s = <%s> ) .
-                                                    FILTER ( ?moreSpecificClass = <%s> )
-                                                }
-                                            }""" % (bindings["?thing1"], bindings["?relationship"], bindings["?thing2"], 
-                                                    bindings["?thing1"], bindings["?relationship"], bindings["?thing2"],
-                                                    bindings["?thing1"], bindings["?thing1_class"],
-                                                    bindings["?thing2"], bindings["?thing2_class"],
-                                                    bindings["?thing1"], bindings["?thing1_class"],
-                                                    bindings["?thing2"], bindings["?thing2_class"]))
-                                            
-    return list(results)
+    rdf = rdflib.namespace.RDF
+    
+    coverage_list = []
+    
+    # Add the relationship triple:
+    coverage_list.append((bindings["?thing1"], bindings["?relationship"], bindings["?thing2"]))
+    
+    # Add any less specific relationships:
+    q_results = graph.query("""SELECT ?lessSpecificRelationship WHERE {
+                                GRAPH <prov_graph> {
+                                    <%s> ?lessSpecificRelationship <%s>
+                                }
+                                <%s> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ ?lessSpecificRelationship
+                            }""" % (bindings["?thing1"], bindings["?thing2"], bindings["?relationship"]))
+    for result in q_results:
+        coverage_list.append((bindings["?thing1"], result[0], bindings["?thing2"]))               
+    
+    # Add the types:
+    coverage_list.append((bindings["?thing1"], rdf.type, bindings["?thing1_class"]))
+    coverage_list.append((bindings["?thing2"], rdf.type, bindings["?thing2_class"]))
+    
+    # Add any less specific types:
+    ## thing1
+    q_results = graph.query("""SELECT ?lessSpecificType WHERE {
+                                GRAPH <prov_graph> {
+                                    <%s> a ?lessSpecificType
+                                }
+                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessSpecificType
+                            }""" % (bindings["?thing1"], bindings["?thing1_class"]))
+    for result in q_results:
+        coverage_list.append((bindings["?thing1"], rdf.type, result[0]))
+    ## thing2
+    q_results = graph.query("""SELECT ?lessSpecificType WHERE {
+                                GRAPH <prov_graph> {
+                                    <%s> a ?lessSpecificType
+                                }
+                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessSpecificType
+                            }""" % (bindings["?thing2"], bindings["?thing2_class"]))
+    for result in q_results:
+        coverage_list.append((bindings["?thing2"], rdf.type, result[0]))
+    
+    return coverage_list
     
 def prop_string(bindings):
     
@@ -190,34 +157,52 @@ def prop_string(bindings):
     
 properties = Template("CE Properties", prop_binding, prop_coverage, prop_string)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+def two_prop_bindings(graph):
+    results = graph.query("""SELECT ?thing1 ?relationship12 ?thing2 ?relationship13 ?thing3 ?thing1_class ?thing2_class ?thing3_class WHERE {
+                            GRAPH <prov_graph> {
+                                ?thing1 ?relationship12 ?thing2 .
+                                ?thing1 ?relationship13 ?thing3 .
+                                ?thing1 a ?thing1_class .
+                                ?thing2 a ?thing2_class .
+                                ?thing3 a ?thing3_class .
+                                FILTER ( ?thing2 != ?thing3)
+                            }
+                          }""")
+                          
+    return results.bindings
 
-
+def two_prop_coverage(bindings, graph):
+    
+    coverage_list = []
+    
+    
+    
+    return coverage_list
+    
+def two_prop_string(bindings):
+    
+    thing1 = str(bindings["?thing1"])
+    thing2 = str(bindings["?thing2"])
+    thing3 = str(bindings["?thing3"])
+    
+    thing1_class = ce.CE.classes[str(bindings["?thing1_class"])]
+    thing2_class = ce.CE.classes[str(bindings["?thing2_class"])]
+    thing3_class = ce.CE.classes[str(bindings["?thing3_class"])]
+    
+    if str(bindings["?relationship12"]) in ce.CE.simple_predicates:
+        relationship12 = ce.CE.simple_predicates[str(bindings["?relationship12"])]
+    else:
+        relationship12 = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship12"])]
+        
+    if str(bindings["?relationship13"]) in ce.CE.simple_predicates:
+        relationship13 = ce.CE.simple_predicates[str(bindings["?relationship13"])]
+    else:
+        relationship13 = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship13"])]
+        
+    return "\x1b[32mThe %s <%s> %s the %s <%s> and %s the %s <%s>.\x1b[0m" % (thing1_class, thing1,
+                                                                    relationship12, thing2_class, thing2,
+                                                                    relationship13, thing3_class, thing3)
+        
+two_props = Template("CE two properties", two_prop_bindings, two_prop_coverage, two_prop_string)
+    
+    

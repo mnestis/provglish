@@ -23,3 +23,12 @@ for binding in bindings:
     triples = transform.properties.coverage(binding, graph)
     for triple in triples:
         print "\t(%s, %s, %s)" % triple
+
+print "\n\n"
+
+bindings = transform.two_props.bindings(graph)
+for binding in bindings:
+    print transform.two_props.make_string(binding)
+    triples = transform.two_props.coverage(binding, graph)
+    for triple in triples:
+        print "\t(%s, %s, %s)" % triple
