@@ -73,7 +73,7 @@ def def_coverage(bindings, graph):
 
 
 def def_string(bindings):
-    return "\x1b[32mThere is %s <%s>.\x1b[0m" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
+    return "\x1b[32mThere is %s <%s>.\x1b[0m\n" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
     
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
@@ -143,13 +143,13 @@ def prop_coverage(bindings, graph):
 def prop_string(bindings):
     
     if str(bindings["?relationship"]) in ce.CE.simple_predicates:
-        return "\x1b[32mThe %s <%s> %s the %s <%s>.\x1b[0m" % (ce.CE.classes[str(bindings["?thing1_class"])], 
+        return "\x1b[32mThe %s <%s>\n\t%s the %s <%s>.\x1b[0m\n" % (ce.CE.classes[str(bindings["?thing1_class"])], 
                                                 bindings["?thing1"], 
                                                 ce.CE.simple_predicates[str(bindings["?relationship"])], 
                                                 ce.CE.classes[str(bindings["?thing2_class"])],
                                                 bindings["?thing2"])
     else:
-        return "\x1b[32mThe %s <%s> %s the %s <%s>.\x1b[0m" % (ce.CE.classes[str(bindings["?thing1_class"])],
+        return "\x1b[32mThe %s <%s>\n\t%s the %s <%s>.\x1b[0m\n" % (ce.CE.classes[str(bindings["?thing1_class"])],
                                                 bindings["?thing1"],
                                                 ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship"])],
                                                 ce.CE.classes[str(bindings["?thing2_class"])],
@@ -257,7 +257,7 @@ def two_prop_string(bindings):
     else:
         relationship13 = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship13"])]
         
-    return "\x1b[32mThe %s <%s> %s the %s <%s> and %s the %s <%s>.\x1b[0m" % (thing1_class, thing1,
+    return "\x1b[32mThe %s <%s>\n\t%s the %s <%s>\n\tand %s the %s <%s>.\x1b[0m\n" % (thing1_class, thing1,
                                                                     relationship12, thing2_class, thing2,
                                                                     relationship13, thing3_class, thing3)
         
