@@ -8,27 +8,12 @@ graph = rdflib.graph.ConjunctiveGraph()
 graph.parse("bravo.ttl",format="turtle", publicID="prov_graph")
 prov.load_prov_ontology(graph)
 
-bindings = transform.definitions.bindings(graph)
-for binding in bindings:
-    print transform.definitions.make_string(binding)
-    triples = transform.definitions.coverage(binding, graph)
-    for triple in triples:
-        print "\t(%s, %s, %s)" % triple
-        
-print "\n\n"
+for sentence in transform.definitions.generate_sentences(graph):
+    print sentence
+    
+for sentence in transform.properties.generate_sentences(graph):
+    print sentence
+    
+for sentence in transform.two_props.generate_sentences(graph):
+    print sentence
 
-bindings = transform.properties.bindings(graph)
-for binding in bindings:
-    print transform.properties.make_string(binding)
-    triples = transform.properties.coverage(binding, graph)
-    for triple in triples:
-        print "\t(%s, %s, %s)" % triple
-
-print "\n\n"
-
-bindings = transform.two_props.bindings(graph)
-for binding in bindings:
-    print transform.two_props.make_string(binding)
-    triples = transform.two_props.coverage(binding, graph)
-    for triple in triples:
-        print "\t(%s, %s, %s)" % triple
