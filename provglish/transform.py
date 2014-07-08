@@ -30,15 +30,25 @@ class Template():
     def make_string(self, bindings):
         return self.__string_function(bindings)
     
+    def generate_sentences(self, graph):
+        sentences = []
+        bindings = self.bindings(graph)
+        for binding in bindings:
+            coverage = self.coverage(binding, graph)
+            sentence_string = self.make_string(binding)
+            sentences.append(Sentence(sentence_string, coverage, binding))
+        return sentences    
+        
     def __str__(self):
         return self.__name
         
 class Sentence():
     
-    def __init__(self, sentence_string, coverage, tracked_ids):
+    def __init__(self, sentence_string, coverage, bindings, tracked_ids=None):
         self.__sentence_string = sentence_string
         self.__coverage = coverage
-        self.__tracked_ids
+        self.__bindings = bindings
+        self.__tracked_ids = tracked_ids
         
     def __str__(self):
         return self.__sentence_string
