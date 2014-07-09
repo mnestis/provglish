@@ -5,14 +5,21 @@ import rdflib
 nl = inflect.engine()
 
 
-class Tranformer():
+class Transformer():
     
     def __init__(self):
         self.__registered_templates = []
 
+    def render_graph(self, graph):
+        sentences = []
+        
+        for template in self.__registered_templates:
+            sentences.extend(template.generate_sentences(graph))
+        
+        return sentences
+
     def register_template(self, template):
         self.__registered_templates.append(template)
-
 
 class Template():    
     def __init__(self, name, bindings_function, coverage_function, string_function):
@@ -45,13 +52,37 @@ class Template():
 class Sentence():
     
     def __init__(self, sentence_string, coverage, bindings, tracked_ids=None):
-        self.__sentence_string = sentence_string
-        self.__coverage = coverage
-        self.__bindings = bindings
-        self.__tracked_ids = tracked_ids
+        self._sentence_string = sentence_string
+        self._coverage = coverage
+        self._coverage_hash = self._calculate_coverage_hash()
+        self._bindings = bindings
+        self._tracked_ids = tracked_ids
         
+    @property    
+    def coverage(self):
+        return self._coverage[:]
+        
+    @property
+    def coverage_hash(self):
+        return self._coverage_hash
+        
+    def _calculate_coverage_hash(self):
+        coverage = sorted(self.coverage, cmp=Sentence._order_triples)
+        return hash(tuple(coverage))
+            
     def __str__(self):
-        return self.__sentence_string
+        return self._sentence_string
+
+    @staticmethod
+    def _order_triples(tripleA, tripleB):
+        if tripleA[0] != tripleB[0]:
+            return (1 if tripleA[0] > tripleB[0] else -1)
+        elif tripleA[1] != tripleB[1]:
+            return (1 if tripleA[1] > tripleB[1] else -1)
+        elif tripleA[2] != tripleB[2]:
+            return (1 if tripleA[2] > tripleB[2] else -1)
+        else:
+            return 0
 
 def def_binding(graph):
     results = graph.query("""SELECT ?object ?class WHERE {
