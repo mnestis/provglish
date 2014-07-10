@@ -1,3 +1,4 @@
 *.pyc
 *.ttl
+*.owl
 *.ce
