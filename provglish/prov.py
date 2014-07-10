@@ -1,4 +1,4 @@
-import rdflib
+import rdflib, os
 from rdflib.plugins import sparql
 
 _less_precise_type_query = sparql.prepareQuery(
@@ -22,7 +22,7 @@ _less_precise_prop_query = sparql.prepareQuery(
 )
 
 def load_prov_ontology(graph):
-    graph.parse("http://www.w3.org/ns/prov.owl",format="xml")
+    graph.parse(os.path.dirname(__file__)+"/prov.owl",format="xml")
     return graph
 
 def fetch_less_precise_type(thing, thing_class, graph):
