@@ -1,6 +1,7 @@
 import ce
 import inflect
 import rdflib
+import prov
 
 nl = inflect.engine()
 
@@ -103,12 +104,9 @@ def def_coverage(bindings, graph):
     coverage_list.append((bindings["?object"], rdf.type, bindings["?class"]))
 
     # Add less specific types
-    q_result = graph.query("""SELECT ?lessSpecificType WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> a ?lessSpecificType
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?lessSpecificType
-                            }""" % (bindings["?object"], bindings["?class"]))
+    q_results = prov.fetch_less_precise_type(bindings["?object"], bindings["?class"], graph)
+    for result in q_results.bindings:
+        coverage_list.append((bindings["?object"], rdf.type, result["?lessPreciseType"]))
 
     return coverage_list
 
@@ -146,12 +144,7 @@ def prop_coverage(bindings, graph):
     coverage_list.append((bindings["?thing1"], bindings["?relationship"], bindings["?thing2"]))
     
     # Add any less specific relationships:
-    q_results = graph.query("""SELECT ?lessSpecificRelationship WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> ?lessSpecificRelationship <%s>
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ ?lessSpecificRelationship
-                            }""" % (bindings["?thing1"], bindings["?thing2"], bindings["?relationship"]))
+    q_results = prov.fetch_less_precise_prop(bindings["?thing1"], bindings["?relationship"], bindings["?thing2"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing1"], result[0], bindings["?thing2"]))               
     
@@ -161,21 +154,12 @@ def prop_coverage(bindings, graph):
     
     # Add any less specific types:
     ## thing1
-    q_results = graph.query("""SELECT ?lessSpecificType WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> a ?lessSpecificType
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessSpecificType
-                            }""" % (bindings["?thing1"], bindings["?thing1_class"]))
+    q_results = prov.fetch_less_precise_type(bindings["?thing1"], bindings["?thing1_class"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing1"], rdf.type, result[0]))
+        
     ## thing2
-    q_results = graph.query("""SELECT ?lessSpecificType WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> a ?lessSpecificType
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessSpecificType
-                            }""" % (bindings["?thing2"], bindings["?thing2_class"]))
+    q_results = prov.fetch_less_precise_type(bindings["?thing2"], bindings["?thing2_class"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing2"], rdf.type, result[0]))
     
@@ -228,51 +212,26 @@ def two_prop_coverage(bindings, graph):
     
     # Add the relationship superproperties
     ## relationship12
-    q_results = graph.query("""SELECT ?lessPreciseProp WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> ?lessPreciseProp <%s>.
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ ?lessPreciseProp .
-                            }""" % (bindings["?thing1"], bindings["?thing2"], bindings["?relationship12"]))
+    q_results = prov.fetch_less_precise_prop(bindings["?thing1"], bindings["?relationship12"], bindings["?thing2"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing1"], result[0], bindings["?relationship12"]))
 
     ## relationship13
-    q_results = graph.query("""SELECT ?lessPreciseProp WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> ?lessPreciseProp <%s>.
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ ?lessPreciseProp .
-                            }""" % (bindings["?thing1"], bindings["?thing3"], bindings["?relationship13"]))
+    q_results = prov.fetch_less_precise_prop(bindings["?thing1"], bindings["?relationship13"], bindings["?thing3"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing1"], result[0], bindings["?relationship13"]))
     
     # Add the object supertypes
     ## thing1
-    q_results = graph.query("""SELECT ?lessPreciseClass WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> a ?lessPreciseClass .
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessPreciseClass .
-                            }""" % (bindings["?thing1"], bindings["?thing1_class"]))
+    q_results = prov.fetch_less_precise_type(bindings["?thing1"], bindings["?thing1_class"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing1"], rdf.type, result[0]))
     ## thing2
-    q_results = graph.query("""SELECT ?lessPreciseClass WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> a ?lessPreciseClass .
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessPreciseClass .
-                            }""" % (bindings["?thing2"], bindings["?thing2_class"]))  
+    q_results = prov.fetch_less_precise_type(bindings["?thing2"], bindings["?thing2_class"], graph) 
     for result in q_results:
         coverage_list.append((bindings["?thing2"], rdf.type, result[0]))
     ## thing3
-    q_results = graph.query("""SELECT ?lessPreciseClass WHERE {
-                                GRAPH <prov_graph> {
-                                    <%s> a ?lessPreciseClass .
-                                }
-                                <%s> <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessPreciseClass .
-                            }""" % (bindings["?thing3"], bindings["?thing3_class"]))   
+    q_results = prov.fetch_less_precise_type(bindings["?thing3"], bindings["?thing3_class"], graph)
     for result in q_results:
         coverage_list.append((bindings["?thing3"], rdf.type, result[0]))
     
