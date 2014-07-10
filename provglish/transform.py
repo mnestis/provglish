@@ -3,6 +3,8 @@ import inflect
 import rdflib
 import prov
 
+prov.init()
+
 nl = inflect.engine()
 
 

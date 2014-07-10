@@ -1,35 +1,39 @@
 import rdflib, os
 from rdflib.plugins import sparql
 
-_less_precise_type_query = sparql.prepareQuery(
-    """SELECT ?lessPreciseType WHERE {
-        GRAPH <prov_graph> {
-            ?thing a ?thing_class .
-            ?thing a ?lessPreciseType
-        }
-        ?thing_class <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessPreciseType
-    }"""
-)
+_queries = {}
 
-_less_precise_prop_query = sparql.prepareQuery(
-    """SELECT ?lessPreciseProp WHERE {
-        GRAPH <prov_graph> {
-            ?thing1 ?prop ?thing2 .
-            ?thing1 ?lessPreciseProp ?thing2
-        }
-        ?prop <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> ?lessPreciseProp
-    }"""
-)
+def init():
+    _queries["less_precise_type"] = sparql.prepareQuery(
+        """SELECT ?lessPreciseType WHERE {
+            GRAPH <prov_graph> {
+                ?thing a ?thing_class .
+                ?thing a ?lessPreciseType
+            }
+            ?thing_class <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?lessPreciseType
+        }"""
+    )
+
+    _queries["less_precise_prop"] = sparql.prepareQuery(
+        """SELECT ?lessPreciseProp WHERE {
+            GRAPH <prov_graph> {
+                ?thing1 ?prop ?thing2 .
+                ?thing1 ?lessPreciseProp ?thing2
+            }
+            ?prop <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> ?lessPreciseProp
+        }"""
+    )
+    _inited = True
 
 def load_prov_ontology(graph):
     graph.parse(os.path.dirname(__file__)+"/prov.owl",format="xml")
     return graph
 
 def fetch_less_precise_type(thing, thing_class, graph):
-    return graph.query(_less_precise_type_query, initBindings={"thing": thing, "thing_class": thing_class})
+    return graph.query(_queries["less_precise_type"], initBindings={"thing": thing, "thing_class": thing_class})
 
 def fetch_less_precise_prop(thing1, prop, thing2, graph):
-    return graph.query(_less_precise_prop_query, initBindings={"thing1": thing1, "thing2": thing2, "prop": prop})
+    return graph.query(_queries["less_precise_prop"], initBindings={"thing1": thing1, "thing2": thing2, "prop": prop})
 
 def exists_more_precise(class_URI, subject_URI, graph):
     if graph.query("""SELECT ?morePreciseClass WHERE 
