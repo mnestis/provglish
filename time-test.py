@@ -5,5 +5,6 @@ from provglish import prov
 
 graph = rdflib.graph.ConjunctiveGraph()
 prov.load_prov_ontology(graph)
+prov.init()
 
 sys.exit()
