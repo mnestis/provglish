@@ -1,7 +1,12 @@
 #!/usr/bin/python
 
+from time import clock
+
+print clock(), "\tImporting rdflib."
 import rdflib
+print clock(), "\tImporting provglish.transform."
 from provglish import transform
+print clock(), "\tImporting provglish.prov."
 from provglish import prov
 
 from random import randint
@@ -9,21 +14,21 @@ from random import randint
 from sys import argv
 
 graph = rdflib.graph.ConjunctiveGraph()
-print "Parsing input file:", argv[1]
+print clock(), "\tParsing input file:", argv[1]
 graph.parse(argv[1],format="turtle", publicID="prov_graph")
-print "Loading the PROV ontology."
+print clock(), "\tLoading the PROV ontology."
 prov.load_prov_ontology(graph)
 
-print "Instantiating the transform engine."
+print clock(), "\tInstantiating the transform engine."
 tran = transform.Transformer()
 tran.register_template(transform.definitions)
 tran.register_template(transform.properties)
 tran.register_template(transform.two_props)
 
-print "Generating all possible sentences."
+print clock(), "\tGenerating all possible sentences."
 all_sentences = tran.render_graph(graph)
 
-print "Removing duplicates."
+print clock(), "\tRemoving duplicates."
 ## Dict: hashes
 ## Key: the hash of the coverage
 ## Value: a list of sentences whose coverage matches that hash
@@ -40,7 +45,7 @@ sentences_pool = []
 for key in hashes:
     sentences_pool.append(hashes[key][randint(0, len(hashes[key])-1)])
 
-print "Choosing the right sentences."
+print clock(), "\tChoosing the right sentences."
 ## Dict: to_be_covered
 ## Key: triple
 ## Value: a list of sentences that can cover that triple
@@ -91,7 +96,7 @@ while to_be_covered:
     if chosen_sentence in sentences_pool:
         sentences_pool.remove(chosen_sentence)
             
-print "Writing output to:", argv[2]            
+print clock(), "\tWriting output to:", argv[2]            
 output_file = open(argv[2], "w")
 output_file.writelines([str(sentence)+"\n" for sentence in chosen_sentences])
 output_file.flush()
