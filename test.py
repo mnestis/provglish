@@ -6,8 +6,10 @@ from provglish import prov
 
 from random import randint
 
+from sys import argv
+
 graph = rdflib.graph.ConjunctiveGraph()
-graph.parse("bravo.ttl",format="turtle", publicID="prov_graph")
+graph.parse(argv[1],format="turtle", publicID="prov_graph")
 prov.load_prov_ontology(graph)
 
 tran = transform.Transformer()
@@ -82,5 +84,7 @@ while to_be_covered:
     if chosen_sentence in sentences_pool:
         sentences_pool.remove(chosen_sentence)
             
-for sentence in chosen_sentences:
-    print sentence
+output_file = open(argv[2], "w")
+output_file.writelines([str(sentence)+"\n" for sentence in chosen_sentences])
+output_file.flush()
+output_file.close()
