@@ -1,6 +1,7 @@
 import ce
 import inflect
 import rdflib
+from rdflib.plugins import sparql
 import prov
 
 prov.init()
@@ -87,13 +88,15 @@ class Sentence():
         else:
             return 0
 
-def def_binding(graph):
-    results = graph.query("""SELECT ?object ?class WHERE {
+_def_binding_query = sparql.prepareQuery("""SELECT ?object ?class WHERE {
                                 GRAPH <prov_graph>
                                 {
                                     ?object a ?class .
                                 }
                                 FILTER regex( str(?class), "^http://www.w3.org/ns/prov#")}""")
+
+def def_binding(graph):
+    results = graph.query(_def_binding_query)
     return results.bindings
     
 def def_coverage(bindings, graph):
@@ -119,9 +122,7 @@ def def_string(bindings):
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
 
-
-def prop_binding(graph):
-    results = graph.query("""SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
+_prop_binding_query = sparql.prepareQuery("""SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
                                 GRAPH <prov_graph>
                                 {
                                     ?thing1 ?relationship ?thing2 . 
@@ -132,6 +133,9 @@ def prop_binding(graph):
                                     FILTER regex( str(?thing2_class), "^http://www.w3.org/ns/prov#")    
                                 }                          
                             }""")
+
+def prop_binding(graph):
+    results = graph.query(_prop_binding_query)
                             
     return results.bindings
     
@@ -183,9 +187,8 @@ def prop_string(bindings):
                                                 bindings["?thing2"])
     
 properties = Template("CE Properties", prop_binding, prop_coverage, prop_string)
-    
-def two_prop_bindings(graph):
-    results = graph.query("""SELECT ?thing1 ?relationship12 ?thing2 ?relationship13 ?thing3 ?thing1_class ?thing2_class ?thing3_class WHERE {
+
+_two_prop_bindings_query = sparql.prepareQuery("""SELECT ?thing1 ?relationship12 ?thing2 ?relationship13 ?thing3 ?thing1_class ?thing2_class ?thing3_class WHERE {
                             GRAPH <prov_graph> {
                                 ?thing1 ?relationship12 ?thing2 .
                                 ?thing1 ?relationship13 ?thing3 .
@@ -195,7 +198,9 @@ def two_prop_bindings(graph):
                                 FILTER ( ?thing2 != ?thing3)
                             }
                           }""")
-                          
+    
+def two_prop_bindings(graph):
+    results = graph.query(_two_prop_bindings_query)
     return results.bindings
 
 def two_prop_coverage(bindings, graph):
