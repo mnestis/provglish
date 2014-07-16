@@ -13,7 +13,9 @@ def parse(filename, file_format):
 
 def convert_graph(graph):
     import prov
+    
     nl = inflect.engine()
+    prov.query_init()
     
     things = graph.query("""SELECT DISTINCT ?provThing ?class WHERE { ?provThing a ?class . FILTER regex(str(?class), "^http://www.w3.org/ns/prov#") } ORDER BY ?provThing""")
     
