@@ -1,0 +1,24 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <https://example.net/> .
+@prefix xsd_1: <http://www.w3.org/2001/XMLSchema> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+ex:ent_charlie prov:wasDerivedFrom ex:ent_bravo .
+
+ex:agt_alpha a prov:Agent .
+
+ex:ent_delta a prov:Entity .
+
+ex:ent_charlie a prov:Entity .
+
+ex:ent_bravo a prov:Entity .
+
+ex:ent_alpha a prov:Entity .
+
+ex:act_alpha a prov:Activity .
+
+ex:act_bravo a prov:Activity .
+
+ex:ent_delta prov:wasInvalidatedBy ex:act_bravo .

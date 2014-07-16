@@ -1,0 +1,29 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <https://example.net/#> .
+@prefix xsd_1: <http://www.w3.org/2001/XMLSchema> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+ex:deriv a prov:Derivation ;
+	prov:entity ex:ingredients .
+
+ex:cake prov:qualifiedDerivation ex:deriv .
+
+ex:deriv prov:hadActivity ex:baking .
+
+ex:ingredients prov:hadMember ex:butter , ex:sugar , ex:eggs , ex:flour .
+
+ex:baking a prov:Activity .
+
+ex:butter a prov:Entity .
+
+ex:eggs a prov:Entity .
+
+ex:ingredients a prov:Entity , prov:Collection .
+
+ex:cake a prov:Entity .
+
+ex:flour a prov:Entity .
+
+ex:sugar a prov:Entity .

@@ -2,3 +2,4 @@
 *.ttl
 *.owl
 *.ce
+!/provglish/test_fixtures/*.ttl
