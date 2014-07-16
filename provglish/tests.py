@@ -1,5 +1,10 @@
 import unittest, os, rdflib
 
+def load_bravo():
+    graph = rdflib.graph.ConjunctiveGraph()
+    graph.parse(os.path.join(os.path.dirname(__file__), "test_fixtures/bravo.ttl"), format="turtle", publicID="prov_graph")
+    return graph
+
 class Check_PROV_graph_not_empty(unittest.TestCase):
     def test(self):
         import prov
@@ -25,8 +30,7 @@ class Check_prov_fetch_less_precise(unittest.TestCase):
         import prov
         reload(prov)
         prov.query_init()
-        graph = rdflib.graph.ConjunctiveGraph()
-        graph.parse(os.path.join(os.path.dirname(__file__), "test_fixtures/bravo.ttl"), format="turtle", publicID="prov_graph")
+        graph = load_bravo()
         self.assertNotEqual(len(graph), 0)
         prov.load_prov_ontology(graph)
         results = prov.fetch_less_precise_type(rdflib.URIRef("https://example.net/#ingredients"),rdflib.URIRef("http://www.w3.org/ns/prov#Collection"), graph)
