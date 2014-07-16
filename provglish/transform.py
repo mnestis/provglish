@@ -270,4 +270,61 @@ def two_prop_string(bindings):
         
 two_props = Template("CE two properties", two_prop_bindings, two_prop_coverage, two_prop_string)
     
+_multi_prop_binding_query = sparql.prepareQuery("""
+        SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
+            GRAPH <prov_graph> {
+                ?thing1 ?relationship ?thing2 .
+                ?thing1 a ?thing1_class .
+                ?thing2 a ?thing2_class
+            }
+            FILTER regex(str(?relationship), "^http://www.w3.org/ns/prov#")
+        } ORDER BY ?thing1 ?relationship ?thing2""")    
     
+def multi_prop_binding(graph):
+    results = graph.query(_multi_prop_binding_query)
+    raw_bindings = results.bindings
+
+    grouped_bindings = []
+    current_subject = None
+    
+    for binding in raw_bindings:
+        if binding["?thing1"] != current_subject:
+            current_subject = binding["?thing1"]
+            grouped_bindings.append({"?thing1":binding["?thing1"], 
+                                     "?thing1_class": binding["?thing1_class"], 
+                                     "relationships": []})
+        grouped_bindings[-1]["relationships"].append({"?relationship": binding["?relationship"], 
+                                                      "?thing2": binding["?thing2"],
+                                                      "?thing2_class": binding["?thing2_class"]})
+                                                      
+    return grouped_bindings
+    
+def multi_prop_coverage(bindings, graph):
+    rdf = rdflib.namespace.RDF
+    coverage_list = []
+    
+    covered_classes_dict = {}
+    
+    # First add the thing1 and its types
+    coverage_list.append((bindings["?thing1"], rdf.type, bindings["?thing1_class"]))
+    covered_classes_dict["?thing1"] = [bindings["?thing1_class"]]
+    
+    # Add supertypes of thing1_class:
+    for supertype in prov.fetch_less_precise_type(bindings["?thing1"], bindings["?thing1_class"], graph):
+        coverage_list.append((bindings["?thing1"], rdf.type, supertype[0]))
+        covered_classes_dict["?thing1"].append(supertype[0])
+
+    # Add all the relationship triples
+    for rel in bindings["relationships"]:
+        # The relationships themselves
+        if (bindings["?thing1"], rel["?relationship"], rel["?thing2"]) not in coverage_list:
+            coverage_list.append((bindings["?thing1"], rel["?relationship"], rel["?thing2"]))
+        
+        # And all the classes of the thing2s
+        if rel["?thing2"] not in covered_classes_dict:
+            covered_classes_dict[rel["?thing2"]] = []
+        if rel["?thing2_class"] not in covered_classes_dict[rel["?thing2"]]:
+            covered_classes_dict[rel["?thing2"]].append(rel["?thing2_class"])
+            coverage_list.append((rel["?thing2"], rdf.type, rel["?thing2_class"]))
+            
+    return coverage_list
