@@ -278,7 +278,7 @@ _multi_prop_binding_query = sparql.prepareQuery("""
                 ?thing2 a ?thing2_class
             }
             FILTER regex(str(?relationship), "^http://www.w3.org/ns/prov#")
-        } ORDER BY ?thing1 ?relationship ?thing2""")    
+        } ORDER BY ?thing1""")    
     
 def multi_prop_binding(graph):
     results = graph.query(_multi_prop_binding_query)
@@ -286,16 +286,26 @@ def multi_prop_binding(graph):
 
     grouped_bindings = []
     current_subject = None
+    most_precise_class = None
     
     for binding in raw_bindings:
         if binding["?thing1"] != current_subject:
+            if most_precise_class != None:
+                grouped_bindings[-1]["?thing1_class"] = most_precise_class
             current_subject = binding["?thing1"]
+            most_precise_class = None
             grouped_bindings.append({"?thing1":binding["?thing1"], 
-                                     "?thing1_class": binding["?thing1_class"], 
                                      "relationships": []})
         grouped_bindings[-1]["relationships"].append({"?relationship": binding["?relationship"], 
                                                       "?thing2": binding["?thing2"],
                                                       "?thing2_class": binding["?thing2_class"]})
+        if most_precise_class == None:
+            most_precise_class = binding["?thing1_class"]
+        elif most_precise_class != binding["?thing1_class"]:
+            if most_precise_class in [res[0] for res in prov.fetch_less_precise_type(binding["?thing1"], binding["?thing1_class"], graph)]:
+                most_precise_class = binding["?thing1_class"]
+            
+    grouped_bindings[-1]["?thing1_class"] = most_precise_class        
                                                       
     return grouped_bindings
     
@@ -328,3 +338,6 @@ def multi_prop_coverage(bindings, graph):
             coverage_list.append((rel["?thing2"], rdf.type, rel["?thing2_class"]))
             
     return coverage_list
+
+def multi_prop_string(bindings):
+    pass

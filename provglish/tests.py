@@ -103,6 +103,7 @@ class Check_multi_prop_coverage_function(unittest.TestCase):
         
         binding = transform.multi_prop_binding(graph)[2]
         self.assertEqual(binding["?thing1"], rdflib.URIRef("https://example.net/#ingredients"))
+        self.assertEqual(binding["?thing1_class"], rdflib.URIRef("http://www.w3.org/ns/prov#Collection"))
         
         coverage = transform.multi_prop_coverage(binding, graph)
         self.assertEqual(len(coverage), 10)
