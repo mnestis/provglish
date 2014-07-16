@@ -21,7 +21,7 @@ def query_init():
                 ?thing1 ?prop ?thing2 .
                 ?thing1 ?lessPreciseProp ?thing2
             }
-            ?prop <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> ?lessPreciseProp
+            ?prop <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ ?lessPreciseProp
         }"""
     )
     _inited = True
