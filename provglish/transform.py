@@ -4,7 +4,7 @@ import rdflib
 from rdflib.plugins import sparql
 import prov
 
-prov.init()
+prov.query_init()
 
 nl = inflect.engine()
 

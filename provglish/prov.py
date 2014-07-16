@@ -2,8 +2,9 @@ import rdflib, os
 from rdflib.plugins import sparql
 
 _queries = {}
+_inited = False
 
-def init():
+def query_init():
     _queries["less_precise_type"] = sparql.prepareQuery(
         """SELECT ?lessPreciseType WHERE {
             GRAPH <prov_graph> {
