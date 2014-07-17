@@ -4,8 +4,6 @@ python:
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: 
   - pip install nose coverage coveralls
-  - pip install rdflib
-  - pip install inflect
   - pip install .
 # command to run tests, e.g. python setup.py test
 script:  nosetests --with-coverage --cover-package=provglish
