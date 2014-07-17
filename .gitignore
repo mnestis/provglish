@@ -2,4 +2,4 @@
 *.ttl
 *.owl
 *.ce
-!/provglish/test_fixtures/*.ttl
+!/provglish/tests/test_fixtures/*.ttl
