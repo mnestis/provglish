@@ -12,18 +12,18 @@ nl = inflect.engine()
 class Transformer():
     
     def __init__(self):
-        self.__registered_templates = []
+        self._registered_templates = []
 
     def render_graph(self, graph):
         sentences = []
         
-        for template in self.__registered_templates:
+        for template in self._registered_templates:
             sentences.extend(template.generate_sentences(graph))
         
         return sentences
 
     def register_template(self, template):
-        self.__registered_templates.append(template)
+        self._registered_templates.append(template)
 
 class Template():    
     def __init__(self, name, bindings_function, coverage_function, string_function):
