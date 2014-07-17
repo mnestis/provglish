@@ -49,7 +49,3 @@ def fetch_less_precise_prop(thing1, prop, thing2, graph):
 def exists_more_precise(class_URI, subject_URI, graph):
     result = graph.query(_queries["exists_more_precise"], initBindings={"thing": subject_URI, "class": class_URI})
     return result.askAnswer
-    
-def root_things(graph):
-    roots = graph.query("SELECT DISTINCT ?thing WHERE { ?thing ?x ?y . FILTER NOT EXISTS { ?a ?b ?thing }}")
-    return list([root[0] for root in roots])
