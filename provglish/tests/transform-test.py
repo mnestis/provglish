@@ -1,5 +1,27 @@
-from helper_funcs import load_bravo
+from helper_funcs import load_bravo, load_fixture
 import unittest, rdflib
+        
+class Check_Transformer(unittest.TestCase):
+    def test(self):
+        from provglish import transform
+        transformer = transform.Transformer()
+        self.assertEqual(len(transformer._registered_templates), 0)
+        transformer.register_template(transform.definitions)
+        self.assertEqual(len(transformer._registered_templates), 1)
+        
+        from provglish import prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("bravo.ttl")
+        prov.load_prov_ontology(graph)
+        
+        sentences = transformer.render_graph(graph)
+        self.assertEqual(len(sentences), 9)
+        
+class Check_Template_str(unittest.TestCase):
+    def test(self):
+        from provglish import transform
+        self.assertEqual(str(transform.definitions), "CE Definitions")
 
 class Check_multi_prop_binding_function(unittest.TestCase):
     def test_count(self):
