@@ -122,154 +122,6 @@ def def_string(bindings):
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
 
-_prop_binding_query = sparql.prepareQuery("""SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
-                                GRAPH <prov_graph>
-                                {
-                                    ?thing1 ?relationship ?thing2 . 
-                                    FILTER regex( str(?relationship), "^http://www.w3.org/ns/prov#") . 
-                                    ?thing1 a ?thing1_class .
-                                    FILTER regex( str(?thing1_class), "^http://www.w3.org/ns/prov#") .
-                                    ?thing2 a ?thing2_class .
-                                    FILTER regex( str(?thing2_class), "^http://www.w3.org/ns/prov#")    
-                                }                          
-                            }""")
-
-def prop_binding(graph):
-    results = graph.query(_prop_binding_query)
-                            
-    return results.bindings
-    
-def prop_coverage(bindings, graph):
-    """Takes a single set of bindings and returns the triples that are covered by the template with those bindings."""
-    
-    rdf = rdflib.namespace.RDF
-    
-    coverage_list = []
-    
-    # Add the relationship triple:
-    coverage_list.append((bindings["?thing1"], bindings["?relationship"], bindings["?thing2"]))
-    
-    # Add any less specific relationships:
-    q_results = prov.fetch_less_precise_prop(bindings["?thing1"], bindings["?relationship"], bindings["?thing2"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing1"], result[0], bindings["?thing2"]))               
-    
-    # Add the types:
-    coverage_list.append((bindings["?thing1"], rdf.type, bindings["?thing1_class"]))
-    coverage_list.append((bindings["?thing2"], rdf.type, bindings["?thing2_class"]))
-    
-    # Add any less specific types:
-    ## thing1
-    q_results = prov.fetch_less_precise_type(bindings["?thing1"], bindings["?thing1_class"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing1"], rdf.type, result[0]))
-        
-    ## thing2
-    q_results = prov.fetch_less_precise_type(bindings["?thing2"], bindings["?thing2_class"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing2"], rdf.type, result[0]))
-    
-    return coverage_list
-    
-def prop_string(bindings):
-    
-    if str(bindings["?relationship"]) in ce.CE.simple_predicates:
-        return "\x1b[32mThe %s <%s>\n\t%s the %s <%s>.\x1b[0m\n" % (ce.CE.classes[str(bindings["?thing1_class"])], 
-                                                bindings["?thing1"], 
-                                                ce.CE.simple_predicates[str(bindings["?relationship"])], 
-                                                ce.CE.classes[str(bindings["?thing2_class"])],
-                                                bindings["?thing2"])
-    else:
-        return "\x1b[32mThe %s <%s>\n\t%s the %s <%s>.\x1b[0m\n" % (ce.CE.classes[str(bindings["?thing1_class"])],
-                                                bindings["?thing1"],
-                                                ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship"])],
-                                                ce.CE.classes[str(bindings["?thing2_class"])],
-                                                bindings["?thing2"])
-    
-properties = Template("CE Properties", prop_binding, prop_coverage, prop_string)
-
-_two_prop_bindings_query = sparql.prepareQuery("""SELECT ?thing1 ?relationship12 ?thing2 ?relationship13 ?thing3 ?thing1_class ?thing2_class ?thing3_class WHERE {
-                            GRAPH <prov_graph> {
-                                ?thing1 ?relationship12 ?thing2 .
-                                ?thing1 ?relationship13 ?thing3 .
-                                ?thing1 a ?thing1_class .
-                                ?thing2 a ?thing2_class .
-                                ?thing3 a ?thing3_class .
-                                FILTER ( ?thing2 != ?thing3)
-                            }
-                          }""")
-    
-def two_prop_bindings(graph):
-    results = graph.query(_two_prop_bindings_query)
-    return results.bindings
-
-def two_prop_coverage(bindings, graph):
-    
-    coverage_list = []
-    rdf = rdflib.namespace.RDF
-    
-    # Add the two relationships
-    coverage_list.append((bindings["?thing1"], bindings["?relationship12"], bindings["?thing2"]))
-    coverage_list.append((bindings["?thing1"], bindings["?relationship13"], bindings["?thing3"]))
-    
-    # Add the three object types
-    coverage_list.append((bindings["?thing1"], rdf.type, bindings["?thing1_class"]))
-    coverage_list.append((bindings["?thing2"], rdf.type, bindings["?thing2_class"]))
-    coverage_list.append((bindings["?thing3"], rdf.type, bindings["?thing3_class"]))
-    
-    # Add the relationship superproperties
-    ## relationship12
-    q_results = prov.fetch_less_precise_prop(bindings["?thing1"], bindings["?relationship12"], bindings["?thing2"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing1"], result[0], bindings["?relationship12"]))
-
-    ## relationship13
-    q_results = prov.fetch_less_precise_prop(bindings["?thing1"], bindings["?relationship13"], bindings["?thing3"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing1"], result[0], bindings["?relationship13"]))
-    
-    # Add the object supertypes
-    ## thing1
-    q_results = prov.fetch_less_precise_type(bindings["?thing1"], bindings["?thing1_class"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing1"], rdf.type, result[0]))
-    ## thing2
-    q_results = prov.fetch_less_precise_type(bindings["?thing2"], bindings["?thing2_class"], graph) 
-    for result in q_results:
-        coverage_list.append((bindings["?thing2"], rdf.type, result[0]))
-    ## thing3
-    q_results = prov.fetch_less_precise_type(bindings["?thing3"], bindings["?thing3_class"], graph)
-    for result in q_results:
-        coverage_list.append((bindings["?thing3"], rdf.type, result[0]))
-    
-    return coverage_list
-    
-def two_prop_string(bindings):
-    
-    thing1 = str(bindings["?thing1"])
-    thing2 = str(bindings["?thing2"])
-    thing3 = str(bindings["?thing3"])
-    
-    thing1_class = ce.CE.classes[str(bindings["?thing1_class"])]
-    thing2_class = ce.CE.classes[str(bindings["?thing2_class"])]
-    thing3_class = ce.CE.classes[str(bindings["?thing3_class"])]
-    
-    if str(bindings["?relationship12"]) in ce.CE.simple_predicates:
-        relationship12 = ce.CE.simple_predicates[str(bindings["?relationship12"])]
-    else:
-        relationship12 = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship12"])]
-        
-    if str(bindings["?relationship13"]) in ce.CE.simple_predicates:
-        relationship13 = ce.CE.simple_predicates[str(bindings["?relationship13"])]
-    else:
-        relationship13 = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(bindings["?relationship13"])]
-        
-    return "\x1b[32mThe %s <%s>\n\t%s the %s <%s>\n\tand %s the %s <%s>.\x1b[0m\n" % (thing1_class, thing1,
-                                                                    relationship12, thing2_class, thing2,
-                                                                    relationship13, thing3_class, thing3)
-        
-two_props = Template("CE two properties", two_prop_bindings, two_prop_coverage, two_prop_string)
-    
 _multi_prop_binding_query = sparql.prepareQuery("""
         SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
             GRAPH <prov_graph> {
@@ -340,4 +192,26 @@ def multi_prop_coverage(bindings, graph):
     return coverage_list
 
 def multi_prop_string(bindings):
-    pass
+    thing1 = bindings["?thing1"]
+    thing1_class = ce.CE.classes[str(bindings["?thing1_class"])]
+    
+    sentence = "The %s <%s>" % (thing1_class, thing1)
+    
+    rel_strings = []
+    for rel in bindings["relationships"]:
+        thing2 = rel["?thing2"]
+        thing2_class = ce.CE.classes[str(rel["?thing2_class"])]
+        if str(rel["?relationship"]) in ce.CE.simple_predicates:
+            relationship = ce.CE.simple_predicates[str(rel["?relationship"])]
+        else:
+            relationship = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(rel["?relationship"])]
+        rel_strings.append("\n\t%s the %s <%s>" % (relationship, thing2_class, thing2))
+        
+    for rel in rel_strings[:-1]:
+        sentence += rel + " and"
+        
+    sentence += rel_strings[-1] + ".\n"
+    
+    return sentence
+        
+multi_prop = Template("CE Multi", multi_prop_binding, multi_prop_coverage, multi_prop_string)

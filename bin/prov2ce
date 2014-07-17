@@ -22,8 +22,7 @@ prov.load_prov_ontology(graph)
 print clock(), "\tInstantiating the transform engine."
 tran = transform.Transformer()
 tran.register_template(transform.definitions)
-tran.register_template(transform.properties)
-tran.register_template(transform.two_props)
+tran.register_template(transform.multi_prop)
 
 print clock(), "\tGenerating all possible sentences."
 all_sentences = tran.render_graph(graph)
