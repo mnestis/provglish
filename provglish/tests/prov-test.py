@@ -37,3 +37,18 @@ class Check_prov_fetch_less_precise(unittest.TestCase):
         
     def test_property(self):
         pass
+
+class Check_prov_exists_more_precise(unittest.TestCase):
+    def test(self):
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_bravo()
+        self.assertNotEqual(len(graph), 0)
+        prov.load_prov_ontology(graph)
+        self.assertTrue(prov.exists_more_precise(rdflib.URIRef("http://www.w3.org/ns/prov#Entity"),
+                                                 rdflib.URIRef("https://example.net/#ingredients"),
+                                                 graph))
+        self.assertFalse(prov.exists_more_precise(rdflib.URIRef("http://www.w3.org/ns/prov#Collection"),
+                                                  rdflib.URIRef("https://example.net/#ingredients"),
+                                                  graph))
