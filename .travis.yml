@@ -8,5 +8,5 @@ install:
   - pip install inflect
   - pip install .
 # command to run tests, e.g. python setup.py test
-script:  nosetests
+script:  nosetests --with-coverage --cover-package=provglish
 after_success: coveralls
