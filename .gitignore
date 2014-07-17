@@ -3,3 +3,5 @@
 *.owl
 *.ce
 !/provglish/tests/test_fixtures/*.ttl
+
+.coverage
