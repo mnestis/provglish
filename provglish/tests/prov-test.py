@@ -1,5 +1,5 @@
 import unittest, rdflib
-from helper_funcs import load_bravo
+from helper_funcs import load_bravo, load_fixture
 
 class Check_PROV_graph_not_empty(unittest.TestCase):
     def test(self):
@@ -36,7 +36,20 @@ class Check_prov_fetch_less_precise(unittest.TestCase):
         self.assertEqual(types[0][0], rdflib.URIRef("http://www.w3.org/ns/prov#Entity"))
         
     def test_property(self):
-        pass
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("bravo-influence.ttl")
+        self.assertNotEqual(len(graph), 0)
+        prov.load_prov_ontology(graph)
+        results = prov.fetch_less_precise_prop(rdflib.URIRef("https://example.net/#cake"),
+                                               rdflib.URIRef("http://www.w3.org/ns/prov#qualifiedDerivation"),
+                                               rdflib.URIRef("https://example.net/#deriv"),
+                                               graph)
+        props = list(results)
+        self.assertEqual(len(props), 1)
+        self.assertEqual(len(props[0]), 1)
+        self.assertEqual(props[0][0], rdflib.URIRef("http://www.w3.org/ns/prov#qualifiedInfluence"))
 
 class Check_prov_exists_more_precise(unittest.TestCase):
     def test(self):
