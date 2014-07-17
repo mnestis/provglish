@@ -9,7 +9,7 @@ setup(
 	scripts=["bin/prov-o-query","bin/prov2ce"],
 	license="LICENSE.txt",
 	description="Converting PROV to Controlled English",
-	long_desciption=open("README.txt").read(),
+	long_desciption=open("README.md").read(),
 	install_requires=[
 		"rdflib >= 4.1.2",
 		"inflect >= 0.2.4",
