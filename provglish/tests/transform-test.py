@@ -4,6 +4,7 @@ import unittest, rdflib
 class Check_Transformer(unittest.TestCase):
     def test(self):
         from provglish import transform
+        reload(transform)
         transformer = transform.Transformer()
         self.assertEqual(len(transformer._registered_templates), 0)
         transformer.register_template(transform.definitions)
@@ -22,6 +23,26 @@ class Check_Template_str(unittest.TestCase):
     def test(self):
         from provglish import transform
         self.assertEqual(str(transform.definitions), "CE Definitions")
+
+class Check_sentence_init(unittest.TestCase):
+    def test(self):
+        from provglish import transform
+        s = transform.Sentence("This is a string", ((1,2,3),(4,5,6)), None)
+        self.assertEqual(str(s),"This is a string")
+        self.assertEqual(s.coverage_hash, hash(((1,2,3),(4,5,6))))
+
+class Check_Sentence_order_triples(unittest.TestCase):
+    def test(self):
+        from provglish import transform
+        ot = transform.Sentence._order_triples
+        self.assertEqual(ot((0,0,0),(0,0,0)), 0)
+        self.assertEqual(ot((0,0,0),(0,0,1)), -1)
+        self.assertEqual(ot((0,0,1),(0,0,0)), 1)
+        self.assertEqual(ot((0,0,1),(0,1,0)), -1)
+        self.assertEqual(ot((0,1,0),(0,0,1)), 1)
+        self.assertEqual(ot((0,1,0),(1,0,0)), -1)
+        self.assertEqual(ot((1,0,0),(0,1,0)), 1)
+
 
 class Check_multi_prop_binding_function(unittest.TestCase):
     def test_count(self):
