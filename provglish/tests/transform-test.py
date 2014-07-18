@@ -112,3 +112,17 @@ class Check_multi_prop_coverage_function(unittest.TestCase):
         
         coverage = transform.multi_prop_coverage(binding, graph)
         self.assertEqual(len(coverage), 10)
+        
+class Check_multi_prop_string_function(unittest.TestCase):
+    def test_cake(self):
+        import provglish.transform as transform
+        import provglish.prov as prov
+        reload(transform)
+        graph = load_fixture("bravo.ttl")
+        prov.load_prov_ontology(graph)
+        
+        bindings = transform.multi_prop_binding(graph)
+        for binding in bindings:
+            sentence = transform.multi_prop_string(binding)
+        # We're not going to actually test the string itself, but assume that if there's no exception, it's worked.
+        
