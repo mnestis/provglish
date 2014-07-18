@@ -201,7 +201,7 @@ def def_coverage(bindings, graph):
 
 
 def def_string(bindings):
-    return "There is %s <%s>.\n" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
+    return "There is %s <%s>.\n" % (nl.a(ce.classes[str(bindings["?class"])]), bindings["?object"])
     
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
@@ -282,18 +282,18 @@ def multi_prop_coverage(bindings, graph):
 
 def multi_prop_string(bindings):
     thing1 = bindings["?thing1"]
-    thing1_class = ce.CE.classes[str(bindings["?thing1_class"])]
+    thing1_class = ce.classes[str(bindings["?thing1_class"])]
     
     sentence = "The %s <%s>" % (thing1_class, thing1)
     
     rel_strings = []
     for rel in bindings["relationships"]:
         thing2 = rel["?thing2"]
-        thing2_class = ce.CE.classes[str(rel["?thing2_class"])]
-        if str(rel["?relationship"]) in ce.CE.simple_predicates:
-            relationship = ce.CE.simple_predicates[str(rel["?relationship"])]
+        thing2_class = ce.classes[str(rel["?thing2_class"])]
+        if str(rel["?relationship"]) in ce.simple_predicates:
+            relationship = ce.simple_predicates[str(rel["?relationship"])]
         else:
-            relationship = ce.CE.qualified_predicates[str(bindings["?thing1_class"])][str(rel["?relationship"])]
+            relationship = ce.qualified_predicates[str(bindings["?thing1_class"])][str(rel["?relationship"])]
         rel_strings.append("\n\t%s the %s <%s>" % (relationship, thing2_class, thing2))
         
     for rel in rel_strings[:-1]:
