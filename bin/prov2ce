@@ -22,15 +22,8 @@ tran = transform.Transformer()
 tran.register_template(transform.definitions)
 tran.register_template(transform.multi_prop)
 
-print clock(), "\tGenerating all possible sentences."
-sentences = tran.render_graph(graph)
-
-print clock(), "\tRemoving duplicates."
-sentences_pool = tran.remove_dup_coverage(sentences)
-
-print clock(), "\tChoosing the right sentences."
-chosen_sentences = tran.choose_sentences(sentences_pool)
-            
+chosen_sentences = tran.transform(graph)
+       
 print clock(), "\tWriting output to:", argv[2]            
 output_file = open(argv[2], "w")
 output_file.writelines([str(sentence)+"\n" for sentence in chosen_sentences])

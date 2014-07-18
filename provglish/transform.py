@@ -14,6 +14,17 @@ class Transformer():
     def __init__(self):
         self._registered_templates = []
 
+    def transform(self, graph):
+        from time import clock
+        print clock(), "\tGenerating all possible sentences."
+        sentences = self.render_graph(graph)
+
+        print clock(), "\tRemoving duplicates."
+        sentences_pool = self.remove_dup_coverage(sentences)
+
+        print clock(), "\tChoosing the right sentences."
+        return self.choose_sentences(sentences_pool)     
+
     def render_graph(self, graph):
         sentences = []
         
