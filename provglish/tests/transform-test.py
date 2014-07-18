@@ -24,6 +24,7 @@ class Check_Transformer_transform(unittest.TestCase):
     def test(self):
         from provglish import ce
         graph = load_bravo()
+        ce.transformer.register_template(ce.templates[1])
         sentences = ce.transformer.transform(graph)
         self.assertEqual(len(sentences), 3)
 
