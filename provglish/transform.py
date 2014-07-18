@@ -22,6 +22,79 @@ class Transformer():
         
         return sentences
 
+    def remove_dup_coverage(self, sentences):
+        from random import randint
+        ## Dict: hashes
+        ## Key: the hash of the coverage
+        ## Value: a list of sentences whose coverage matches that hash
+        hashes = {}
+        for sentence in sentences:
+            if sentence.coverage_hash not in hashes:
+                hashes[sentence.coverage_hash] = [sentence]
+            else:
+                hashes[sentence.coverage_hash].append(sentence)
+
+        ## Remove sentences that cover the same triple  
+        sentences_out = [] 
+        
+        for key in hashes:
+            sentences_out.append(hashes[key][randint(0, len(hashes[key])-1)])
+            
+        return sentences_out
+        
+    def choose_sentence(self, to_be_covered, sentences):
+        # If there's a triple that can only be covered by one sentence, we must pick that sentence.
+        for triple in to_be_covered:
+            if len(to_be_covered[triple])==1:
+                return to_be_covered[triple][0]
+        
+        # Now we pick the sentence with the greatest coverage
+        biggest = (0, None)
+        for sentence in sentences:
+            if len(sentence.coverage) > biggest[0]:
+                biggest = (len(sentence.coverage), sentence)
+    
+        return biggest[1]
+        
+    def choose_sentences(self, sentences):
+        ## Dict: to_be_covered
+        ## Key: triple
+        ## Value: a list of sentences that can cover that triple
+        to_be_covered = {}
+
+        for sentence in sentences:
+            for triple in sentence.coverage:
+                if triple not in to_be_covered:
+                    to_be_covered[triple] = [sentence]
+                else:
+                    to_be_covered[triple].append(sentence)
+        
+        chosen_sentences = [] # A list that will hold the sentences we choose
+
+        while to_be_covered:
+            chosen_sentence = self.choose_sentence(to_be_covered, sentences)
+            chosen_sentences.append(chosen_sentence)
+            for triple in chosen_sentence.coverage:
+                # If the triple details something other than class, remove all other sentences that cover it
+                if triple[1] != rdflib.namespace.RDF.type:
+                    # For each sentence that covers it
+                    for sentence in to_be_covered[triple]:
+                        # We need to remove the sentence from the lists of sentences that cover the *other* triples it covers
+                        for a_triple in sentence.coverage:
+                            if triple != a_triple:
+                                if a_triple in to_be_covered:
+                                    to_be_covered[a_triple].remove(sentence)
+                        # Then remove the sentence itself from the pool
+                        sentences.remove(sentence)
+                # Remove any triples it covers from to_be_covered
+                if triple in to_be_covered:
+                    del to_be_covered[triple]
+            
+            if chosen_sentence in sentences:
+                sentences.remove(chosen_sentence)
+        
+        return chosen_sentences
+
     def register_template(self, template):
         self._registered_templates.append(template)
 
