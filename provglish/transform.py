@@ -117,7 +117,7 @@ def def_coverage(bindings, graph):
 
 
 def def_string(bindings):
-    return "\x1b[32mThere is %s <%s>.\x1b[0m\n" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
+    return "There is %s <%s>.\n" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
     
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
