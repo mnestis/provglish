@@ -1,3 +1,11 @@
+from provglish import transform, prov
+from rdflib.plugins import sparql
+import rdflib
+
+import inflect
+
+_nl = inflect.engine()
+
 classes = {
     "http://www.w3.org/ns/prov#Entity": "entity",
     "http://www.w3.org/ns/prov#Activity": "activity", 
@@ -142,3 +150,138 @@ qualified_predicates = {
         "http://www.w3.org/ns/prov#agent": "entails delegation by"
     }
 }
+
+_def_binding_query = sparql.prepareQuery("""SELECT ?object ?class WHERE {
+                                GRAPH <prov_graph>
+                                {
+                                    ?object a ?class .
+                                }
+                                FILTER regex( str(?class), "^http://www.w3.org/ns/prov#")}""")
+
+def _def_binding(graph):
+    results = graph.query(_def_binding_query)
+    return results.bindings
+    
+def _def_coverage(bindings, graph):
+    """Takes a single set of bindings and returns the triples that are covered by the template with those bindings."""
+    rdf = rdflib.namespace.RDF    
+        
+    coverage_list = []
+    
+    # Add the type
+    coverage_list.append((bindings["?object"], rdf.type, bindings["?class"]))
+
+    # Add less specific types
+    q_results = prov.fetch_less_precise_type(bindings["?object"], bindings["?class"], graph)
+    for result in q_results.bindings:
+        coverage_list.append((bindings["?object"], rdf.type, result["?lessPreciseType"]))
+
+    return coverage_list
+
+
+def _def_string(bindings):
+    return "There is %s <%s>.\n" % (_nl.a(classes[str(bindings["?class"])]), bindings["?object"])
+
+_multi_prop_binding_query = sparql.prepareQuery("""
+        SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
+            GRAPH <prov_graph> {
+                ?thing1 ?relationship ?thing2 .
+                ?thing1 a ?thing1_class .
+                ?thing2 a ?thing2_class
+            }
+            FILTER regex(str(?relationship), "^http://www.w3.org/ns/prov#")
+        } ORDER BY ?thing1""")    
+    
+def _multi_prop_binding(graph):
+    results = graph.query(_multi_prop_binding_query)
+    raw_bindings = results.bindings
+
+    grouped_bindings = []
+    current_subject = None
+    most_precise_class = None
+    
+    for binding in raw_bindings:
+        if binding["?thing1"] != current_subject:
+            if most_precise_class != None:
+                grouped_bindings[-1]["?thing1_class"] = most_precise_class
+            current_subject = binding["?thing1"]
+            most_precise_class = None
+            grouped_bindings.append({"?thing1":binding["?thing1"], 
+                                     "relationships": []})
+        if not prov.exists_more_precise(binding["?thing2_class"], binding["?thing2"], graph):
+            rel = {"?relationship": binding["?relationship"], 
+                   "?thing2": binding["?thing2"],
+                   "?thing2_class": binding["?thing2_class"]}
+            if rel not in grouped_bindings[-1]["relationships"]:
+                grouped_bindings[-1]["relationships"].append(rel)
+        if most_precise_class == None:
+            most_precise_class = binding["?thing1_class"]
+        elif most_precise_class != binding["?thing1_class"]:
+            if most_precise_class in [res[0] for res in prov.fetch_less_precise_type(binding["?thing1"], binding["?thing1_class"], graph)]:
+                most_precise_class = binding["?thing1_class"]
+            
+    grouped_bindings[-1]["?thing1_class"] = most_precise_class        
+                                                      
+    return grouped_bindings
+    
+def _multi_prop_coverage(bindings, graph):
+    rdf = rdflib.namespace.RDF
+    coverage_list = []
+    
+    covered_classes_dict = {}
+    
+    # First add the thing1 and its types
+    coverage_list.append((bindings["?thing1"], rdf.type, bindings["?thing1_class"]))
+    covered_classes_dict["?thing1"] = [bindings["?thing1_class"]]
+    
+    # Add supertypes of thing1_class:
+    for supertype in prov.fetch_less_precise_type(bindings["?thing1"], bindings["?thing1_class"], graph):
+        coverage_list.append((bindings["?thing1"], rdf.type, supertype[0]))
+        covered_classes_dict["?thing1"].append(supertype[0])
+
+    # Add all the relationship triples
+    for rel in bindings["relationships"]:
+        # The relationships themselves
+        if (bindings["?thing1"], rel["?relationship"], rel["?thing2"]) not in coverage_list:
+            coverage_list.append((bindings["?thing1"], rel["?relationship"], rel["?thing2"]))
+        
+        # And all the classes of the thing2s
+        triple = (rel["?thing2"], rdf.type, rel["?thing2_class"])
+        if triple not in coverage_list:
+            coverage_list.append(triple)
+        for superclass in prov.fetch_less_precise_type(rel["?thing2"], rel["?thing2_class"], graph):
+            triple = (rel["?thing2"], rdf.type, superclass[0])
+            if triple not in coverage_list:
+                coverage_list.append(triple)
+            
+    return coverage_list
+
+def _multi_prop_string(bindings):
+    thing1 = bindings["?thing1"]
+    thing1_class = classes[str(bindings["?thing1_class"])]
+    
+    sentence = "The %s <%s>" % (thing1_class, thing1)
+    
+    rel_strings = []
+    for rel in bindings["relationships"]:
+        thing2 = rel["?thing2"]
+        thing2_class = classes[str(rel["?thing2_class"])]
+        if str(rel["?relationship"]) in simple_predicates:
+            relationship = simple_predicates[str(rel["?relationship"])]
+        else:
+            relationship = qualified_predicates[str(bindings["?thing1_class"])][str(rel["?relationship"])]
+        rel_strings.append("\n\t%s the %s <%s>" % (relationship, thing2_class, thing2))
+        
+    for rel in rel_strings[:-1]:
+        sentence += rel + " and"
+        
+    sentence += rel_strings[-1] + ".\n"
+    
+    return sentence
+
+templates = [transform.Template("CE Definitions", _def_binding, _def_coverage, _def_string),
+             transform.Template("CE Multi", _multi_prop_binding, _multi_prop_coverage, _multi_prop_string)]
+
+transformer = transform.Transformer()
+for template in templates:
+    transformer.register_template(template)

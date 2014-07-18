@@ -1,30 +1,15 @@
 #!/usr/bin/python
 
-from time import clock
-
-print clock(), "\tImporting rdflib."
 import rdflib
-print clock(), "\tImporting provglish.transform."
-from provglish import transform
-print clock(), "\tImporting provglish.prov."
-from provglish import prov
+from provglish import ce
 
 from sys import argv
 
 graph = rdflib.graph.ConjunctiveGraph()
-print clock(), "\tParsing input file:", argv[1]
 graph.parse(argv[1],format="turtle", publicID="prov_graph")
-print clock(), "\tLoading the PROV ontology."
-prov.load_prov_ontology(graph)
 
-print clock(), "\tInstantiating the transform engine."
-tran = transform.Transformer()
-tran.register_template(transform.definitions)
-tran.register_template(transform.multi_prop)
+chosen_sentences = ce.transformer.transform(graph)
 
-chosen_sentences = tran.transform(graph)
-       
-print clock(), "\tWriting output to:", argv[2]            
 output_file = open(argv[2], "w")
 output_file.writelines([str(sentence)+"\n" for sentence in chosen_sentences])
 output_file.flush()
