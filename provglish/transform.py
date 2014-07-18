@@ -117,7 +117,7 @@ def def_coverage(bindings, graph):
 
 
 def def_string(bindings):
-    return "\x1b[32mThere is %s <%s>.\x1b[0m\n" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
+    return "There is %s <%s>.\n" % (nl.a(ce.CE.classes[str(bindings["?class"])]), bindings["?object"])
     
 
 definitions = Template("CE Definitions", def_binding, def_coverage, def_string)
@@ -148,9 +148,12 @@ def multi_prop_binding(graph):
             most_precise_class = None
             grouped_bindings.append({"?thing1":binding["?thing1"], 
                                      "relationships": []})
-        grouped_bindings[-1]["relationships"].append({"?relationship": binding["?relationship"], 
-                                                      "?thing2": binding["?thing2"],
-                                                      "?thing2_class": binding["?thing2_class"]})
+        if not prov.exists_more_precise(binding["?thing2_class"], binding["?thing2"], graph):
+            rel = {"?relationship": binding["?relationship"], 
+                   "?thing2": binding["?thing2"],
+                   "?thing2_class": binding["?thing2_class"]}
+            if rel not in grouped_bindings[-1]["relationships"]:
+                grouped_bindings[-1]["relationships"].append(rel)
         if most_precise_class == None:
             most_precise_class = binding["?thing1_class"]
         elif most_precise_class != binding["?thing1_class"]:
@@ -183,11 +186,13 @@ def multi_prop_coverage(bindings, graph):
             coverage_list.append((bindings["?thing1"], rel["?relationship"], rel["?thing2"]))
         
         # And all the classes of the thing2s
-        if rel["?thing2"] not in covered_classes_dict:
-            covered_classes_dict[rel["?thing2"]] = []
-        if rel["?thing2_class"] not in covered_classes_dict[rel["?thing2"]]:
-            covered_classes_dict[rel["?thing2"]].append(rel["?thing2_class"])
-            coverage_list.append((rel["?thing2"], rdf.type, rel["?thing2_class"]))
+        triple = (rel["?thing2"], rdf.type, rel["?thing2_class"])
+        if triple not in coverage_list:
+            coverage_list.append(triple)
+        for superclass in prov.fetch_less_precise_type(rel["?thing2"], rel["?thing2_class"], graph):
+            triple = (rel["?thing2"], rdf.type, superclass[0])
+            if triple not in coverage_list:
+                coverage_list.append(triple)
             
     return coverage_list
 

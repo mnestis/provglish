@@ -64,9 +64,9 @@ class Check_multi_prop_binding_function(unittest.TestCase):
                 self.assertEqual(len(result["relationships"]), 1) # derived according to deriv
             elif result["?thing1"] == rdflib.URIRef("https://example.net/#deriv"):
                 print result["relationships"]
-                self.assertEqual(len(result["relationships"]), 3) # derived from ent/coll ingredients, by baking
+                self.assertEqual(len(result["relationships"]), 2) # derived from ingredients, by baking
             elif result["?thing1"] == rdflib.URIRef("https://example.net/#ingredients"):
-                self.assertEqual(len(result["relationships"]), 8) # had member, ent/coll flour egg sugar butter.
+                self.assertEqual(len(result["relationships"]), 4) # had member, ent/coll flour egg sugar butter.
             else:
                 self.fail()
                 
@@ -112,3 +112,17 @@ class Check_multi_prop_coverage_function(unittest.TestCase):
         
         coverage = transform.multi_prop_coverage(binding, graph)
         self.assertEqual(len(coverage), 10)
+        
+class Check_multi_prop_string_function(unittest.TestCase):
+    def test_cake(self):
+        import provglish.transform as transform
+        import provglish.prov as prov
+        reload(transform)
+        graph = load_fixture("bravo.ttl")
+        prov.load_prov_ontology(graph)
+        
+        bindings = transform.multi_prop_binding(graph)
+        for binding in bindings:
+            sentence = transform.multi_prop_string(binding)
+        # We're not going to actually test the string itself, but assume that if there's no exception, it's worked.
+        
