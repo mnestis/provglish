@@ -180,7 +180,7 @@ def _def_coverage(bindings, graph):
 
 
 def _def_string(bindings):
-    return "There is %s <%s>.\n" % (_nl.a(classes[str(bindings["?class"])]), bindings["?object"])
+    return "there is %s named <%s>.\n" % (_nl.a(classes[str(bindings["?class"])]), bindings["?object"])
 
 _multi_prop_binding_query = sparql.prepareQuery("""
         SELECT ?thing1 ?relationship ?thing2 ?thing1_class ?thing2_class WHERE {
@@ -260,7 +260,7 @@ def _multi_prop_string(bindings):
     thing1 = bindings["?thing1"]
     thing1_class = classes[str(bindings["?thing1_class"])]
     
-    sentence = "The %s <%s>" % (thing1_class, thing1)
+    sentence = "the %s <%s>" % (thing1_class, thing1)
     
     rel_strings = []
     for rel in bindings["relationships"]:

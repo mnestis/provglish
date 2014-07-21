@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
 	name="Provglish",
-	version="0.3.0",
+	version="0.3.1",
 	author="Darren Richardson",
 	packages=["provglish","provglish.tests"],
 	package_data={"provglish":["prov.owl",]},

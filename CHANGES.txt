@@ -1,3 +1,9 @@
+v0.3.1, 2014-07-21 -- CE Fix
+	- The CE string generating functions had some mistakes. Sentences in
+	CE are supposed to start with a lower case letter. Additionally, the
+	sentences starting "there is" should follow the pattern "there is a
+	*thing* named *identifier*."
+
 v0.3.0, 2014-07-18 -- API Change
 	- The code does exactly the same stuff, but I've moved a load of the
 	functions around to make the API, (when I eventually publish one),
