@@ -5,3 +5,6 @@
 !/provglish/tests/test_fixtures/*.ttl
 
 .coverage
+
+# Ignore emacs temporary files.
+*~
