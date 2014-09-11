@@ -33,6 +33,26 @@ def query_init():
             ?morePreciseClass <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?class .
         }"""
     )
+    
+    _queries["fetch_all_alternates"] = sparql.prepareQuery(
+        """SELECT DISTINCT ?entity WHERE {
+            GRAPH <prov_graph> {
+                { ?entity <http://www.w3.org/ns/prov#alternateOf>|<http://www.w3.org/ns/prov#specializationOf> ?otherEntity } UNION
+                { ?otherEntity <http://www.w3.org/ns/prov#alternateOf>|<http://www.w3.org/ns/prov#specializationOf> ?entity }
+            }
+        }"""
+    )
+    
+    _queries["fetch_related_alternates"] = sparql.prepareQuery(
+        """SELECT DISTINCT ?entity WHERE {
+            GRAPH <prov_graph> {
+                { ?sourceEnt (<http://www.w3.org/ns/prov#alternateOf>|
+                              <http://www.w3.org/ns/prov#specializationOf>|
+                              ^(<http://www.w3.org/ns/prov#alternateOf>)|
+                              ^(<http://www.w3.org/ns/prov#specializationOf>))* ?entity }
+            }
+        }"""
+    )
   
     _inited = True
 
@@ -49,3 +69,20 @@ def fetch_less_precise_prop(thing1, prop, thing2, graph):
 def exists_more_precise(class_URI, subject_URI, graph):
     result = graph.query(_queries["exists_more_precise"], initBindings={"thing": subject_URI, "class": class_URI})
     return result.askAnswer
+
+def fetch_all_alternates(graph):
+    results = graph.query(_queries["fetch_all_alternates"])
+    return [res[0] for res in results]
+    
+def fetch_all_alternate_groups(graph):
+    entities = fetch_all_alternates(graph)
+    
+    groups = []
+    
+    while(entities):
+        alternates = [res[0] for res in graph.query(_queries["fetch_related_alternates"], initBindings={"?sourceEnt": entities[0]})]
+        for alternate in alternates:
+            entities.remove(alternate)
+        groups.append(tuple(alternates))
+        
+    return groups

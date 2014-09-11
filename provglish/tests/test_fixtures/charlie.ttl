@@ -1,0 +1,74 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <https://example.net/#> .
+@prefix xsd_1: <http://www.w3.org/2001/XMLSchema> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+ex:charlie-2 prov:specializationOf ex:charlie .
+
+ex:bravo-1 prov:specializationOf ex:bravo .
+
+ex:bravo-2 prov:specializationOf ex:bravo-1 .
+
+ex:charlie-1 prov:specializationOf ex:charlie .
+
+ex:alpha a prov:Agent .
+
+ex:bravo a prov:Agent .
+
+ex:charlie a prov:Agent .
+
+ex:bravo-2 prov:alternateOf ex:bravo-1 .
+
+ex:bravo-1 prov:alternateOf ex:bravo-1 .
+
+ex:charlie prov:alternateOf ex:charlie .
+
+ex:bravo-2 prov:alternateOf ex:bravo .
+
+ex:bravo-1 prov:alternateOf ex:bravo .
+
+ex:bravo prov:alternateOf ex:bravo .
+
+ex:bravo-1 prov:alternateOf ex:bravo-2 .
+
+ex:bravo prov:alternateOf ex:bravo-2 .
+
+ex:alpha prov:alternateOf ex:alpha-2 .
+
+ex:bravo-2 prov:alternateOf ex:bravo-2 .
+
+ex:charlie-1 prov:alternateOf ex:charlie-2 , ex:charlie-1 .
+
+ex:charlie-2 prov:alternateOf ex:charlie-1 , ex:charlie .
+
+ex:charlie prov:alternateOf ex:charlie-1 .
+
+ex:charlie-1 prov:alternateOf ex:charlie .
+
+ex:charlie prov:alternateOf ex:charlie-2 .
+
+ex:bravo prov:alternateOf ex:bravo-1 .
+
+ex:charlie-2 prov:alternateOf ex:charlie-2 .
+
+ex:alpha prov:alternateOf ex:alpha-1 , ex:alpha .
+
+ex:alpha-2 prov:alternateOf ex:alpha .
+
+ex:alpha-1 prov:alternateOf ex:alpha-2 , ex:alpha-1 , ex:alpha .
+
+ex:alpha-2 prov:alternateOf ex:alpha-2 , ex:alpha-1 .
+
+ex:charlie-1 a prov:Entity .
+
+ex:charlie-2 a prov:Entity .
+
+ex:bravo-1 a prov:Entity .
+
+ex:bravo-2 a prov:Entity .
+
+ex:alpha-1 a prov:Entity .
+
+ex:alpha-2 a prov:Entity .
