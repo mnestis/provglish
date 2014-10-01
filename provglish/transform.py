@@ -93,9 +93,6 @@ class Transformer():
                 # Remove any triples it covers from to_be_covered
                 if triple in to_be_covered:
                     del to_be_covered[triple]
-            
-            if chosen_sentence in sentences:
-                sentences.remove(chosen_sentence)
         
         return chosen_sentences
 
