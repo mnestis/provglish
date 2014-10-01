@@ -1,5 +1,5 @@
 import unittest, rdflib
-from helper_funcs import load_bravo, load_fixture
+from helper_funcs import load_fixture
 
 class Check_PROV_graph_not_empty(unittest.TestCase):
     def test(self):
@@ -26,7 +26,7 @@ class Check_prov_fetch_less_precise(unittest.TestCase):
         import provglish.prov as prov
         reload(prov)
         prov.query_init()
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         self.assertNotEqual(len(graph), 0)
         prov.load_prov_ontology(graph)
         results = prov.fetch_less_precise_type(rdflib.URIRef("https://example.net/#ingredients"),rdflib.URIRef("http://www.w3.org/ns/prov#Collection"), graph)
@@ -56,7 +56,7 @@ class Check_prov_exists_more_precise(unittest.TestCase):
         import provglish.prov as prov
         reload(prov)
         prov.query_init()
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         self.assertNotEqual(len(graph), 0)
         prov.load_prov_ontology(graph)
         self.assertTrue(prov.exists_more_precise(rdflib.URIRef("http://www.w3.org/ns/prov#Entity"),

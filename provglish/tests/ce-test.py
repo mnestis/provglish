@@ -1,5 +1,5 @@
 import unittest
-from helper_funcs import load_bravo, load_fixture
+from helper_funcs import load_fixture
 import rdflib
 
 class Check_multi_prop_binding_function(unittest.TestCase):
@@ -9,7 +9,7 @@ class Check_multi_prop_binding_function(unittest.TestCase):
         """
         import provglish.ce as ce
         import provglish.prov as prov
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         self.assertNotEqual(len(graph), 0)
         prov.load_prov_ontology(graph)
         results = ce._multi_prop_binding(graph)
@@ -31,7 +31,7 @@ class Check_multi_prop_coverage_function(unittest.TestCase):
     def test_bravo_cake_count(self):
         import provglish.ce as ce
         import provglish.prov as prov
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         prov.load_prov_ontology(graph)
         
         binding = ce._multi_prop_binding(graph)[0]
@@ -45,7 +45,7 @@ class Check_multi_prop_coverage_function(unittest.TestCase):
     def test_bravo_deriv_count(self):
         import provglish.ce as ce
         import provglish.prov as prov
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         prov.load_prov_ontology(graph)
         
         binding = ce._multi_prop_binding(graph)[1]
@@ -57,7 +57,7 @@ class Check_multi_prop_coverage_function(unittest.TestCase):
     def test_bravo_ingredients_count(self):
         import provglish.ce as ce
         import provglish.prov as prov
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         prov.load_prov_ontology(graph)
         
         binding = ce._multi_prop_binding(graph)[2]

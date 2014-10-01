@@ -1,4 +1,4 @@
-from helper_funcs import load_bravo, load_fixture
+from helper_funcs import load_fixture
 import unittest, rdflib
         
 class Check_Transformer(unittest.TestCase):
@@ -23,7 +23,7 @@ class Check_Transformer(unittest.TestCase):
 class Check_Transformer_transform(unittest.TestCase):
     def test(self):
         from provglish import ce
-        graph = load_bravo()
+        graph = load_fixture("bravo.ttl")
         ce.transformer.register_template(ce.templates[1])
         sentences = ce.transformer.transform(graph)
         self.assertEqual(len(sentences), 3)
