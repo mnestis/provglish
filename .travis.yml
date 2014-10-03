@@ -5,6 +5,7 @@ python:
 install: 
   - pip install nose coverage coveralls
   - pip install .
+  - python -m nltk.downloader all
 # command to run tests, e.g. python setup.py test
 script:  nosetests --with-coverage --cover-package=provglish
 after_success: coveralls

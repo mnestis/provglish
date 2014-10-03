@@ -13,9 +13,11 @@ setup(
 	install_requires=[
 		"rdflib >= 4.1.2",
 		"inflect >= 0.2.4",
+		"nltk (>=2.7.6)",
 	],
 	requires=[
 		"rdflib (>=4.1.2)",
 		"inflect (>=0.2.4)",
+		"nltk (>=2.7.6)",
 	],
 )
