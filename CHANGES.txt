@@ -1,3 +1,8 @@
+v0.3.2, 2014-10-03 -- Specialisations
+	- Added some queries to group specialisations and alternates so that
+	they can be treated consistently. Additionally removed some unused
+	code.
+
 v0.3.1, 2014-07-21 -- CE Fix
 	- The CE string generating functions had some mistakes. Sentences in
 	CE are supposed to start with a lower case letter. Additionally, the
