@@ -53,6 +53,17 @@ def query_init():
             }
         }"""
     )
+
+    _queries["fetch_all_prov_things"] = sparql.prepareQuery(
+        """SELECT DISTINCT ?thing WHERE {
+              GRAPH <prov_graph> {
+                 { ?thing a <http://www.w3.org/ns/prov#Entity> } UNION
+                 { ?thing a <http://www.w3.org/ns/prov#Collection> } UNION
+                 { ?thing a <http://www.w3.org/ns/prov#Activity> } UNION
+                 { ?thing a <http://www.w3.org/ns/prov#Agent> }
+              }
+        }"""
+    )
   
     _inited = True
 
@@ -86,3 +97,7 @@ def fetch_all_alternate_groups(graph):
         groups.append(tuple(alternates))
         
     return groups
+
+def fetch_all_prov_things(graph):
+    results = graph.query(_queries["fetch_all_prov_things"])
+    return [res[0] for res in results]

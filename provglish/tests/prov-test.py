@@ -89,3 +89,22 @@ class Check_alternates(unittest.TestCase):
         self.assertEqual(len(groups), 3)
         for group in groups:
             self.assertEqual(len(group), 3)
+
+class Check_fetch_all_prov_things(unittest.TestCase):
+    def test(self):
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("bravo.ttl")
+        self.assertNotEqual(len(graph),0)
+        prov.load_prov_ontology(graph)
+
+        things = prov.fetch_all_prov_things(graph)
+        self.assertEqual(len(things), 7)
+
+        graph = load_fixture("charlie.ttl")
+        self.assertNotEqual(len(graph),0)
+        prov.load_prov_ontology(graph)
+
+        things = prov.fetch_all_prov_things(graph)
+        self.assertEqual(len(things), 9) 
