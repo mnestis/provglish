@@ -1,4 +1,5 @@
 import re
+import nltk
 
 def urn_from_uri(uri):
     """
@@ -9,3 +10,15 @@ def urn_from_uri(uri):
     but need to be made strings before they'll have a string method available.
     """
     return re.split("[#/]", str(uri))[-1]
+
+def plural_p(word):
+    """
+    This function is really messy, and there is probably a better, more reliable
+    way to do this. Basically, it's using a POS tagger to tag a single word.
+
+    (The POS tagger is designed to work on sentences rather than single words,
+    however performance isn't actually terrible here, surprisingly)
+
+    If that tag is NNS or NNPS, then it is a plural.
+    """
+    return re.match("NN.*S", nltk.pos_tag([word])[0][1])
