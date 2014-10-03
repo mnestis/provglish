@@ -21,4 +21,4 @@ def plural_p(word):
 
     If that tag is NNS or NNPS, then it is a plural.
     """
-    return re.match("NN.*S", nltk.pos_tag([word])[0][1])
+    return re.match("NNP?S", nltk.pos_tag([word])[0][1])
