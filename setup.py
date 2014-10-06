@@ -6,7 +6,7 @@ class setup_nltk(install):
 		install.run(self)
 		import nltk	
 		print "  Downloading all the NLTK files. This may take some time..."
-                nltk.downloader.download("all")
+                nltk.downloader.download("maxent_treebank_pos_tagger")
                 print "    Done."
 
 setup(
