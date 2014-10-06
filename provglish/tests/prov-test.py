@@ -7,6 +7,14 @@ class Check_PROV_graph_not_empty(unittest.TestCase):
         graph = rdflib.graph.ConjunctiveGraph()
         prov.load_prov_ontology(graph)
         self.assertNotEqual(len(graph),0)
+
+class Check_that_exception_thrown_if_query_before_init(unittest.TestCase):
+    def test(self):
+        import provglish.prov as prov
+        reload(prov)
+        graph = rdflib.graph.ConjunctiveGraph()
+        graph = load_fixture("bravo.ttl")
+        self.assertRaises(prov.QueriesNotInitedError, prov.fetch_all_alternates, [graph])
         
 class Check_that_prov_queries_not_populated_before_init(unittest.TestCase):
     def test(self):
