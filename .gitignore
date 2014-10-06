@@ -9,3 +9,4 @@
 # Ignore emacs temporary files.
 *~
 \#*\#
+.\#*
