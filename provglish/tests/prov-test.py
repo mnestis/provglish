@@ -141,3 +141,18 @@ class Check_fetch_all_prov_things(unittest.TestCase):
         things = prov.fetch_all_prov_things(graph)
         self.assertEqual(len(things), 9) 
 
+class Check_fetch_all_agents(unittest.TestCase):
+    def test(self):
+        from rdflib import URIRef
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("charlie.ttl")
+        self.assertNotEqual(len(graph), 0)
+        prov.load_prov_ontology(graph)
+
+        agents = prov.fetch_all_agents(graph)
+        self.assertEqual(len(agents), 3)
+        self.assertTrue(URIRef("https://example.net/#alpha") in agents)
+        self.assertTrue(URIRef("https://example.net/#bravo") in agents)
+        self.assertTrue(URIRef("https://example.net/#charlie") in agents)

@@ -64,6 +64,14 @@ def query_init():
               }
         }"""
     )
+
+    _queries["fetch_all_agents"] = sparql.prepareQuery(
+        """SELECT DISTINCT ?agent WHERE {
+              GRAPH <prov_graph> {
+                 ?agent a <http://www.w3.org/ns/prov#Agent>
+              }
+        }"""
+    )
   
     _inited = True
 
@@ -123,3 +131,8 @@ def fetch_all_prov_things(graph):
     _check_inited()
     results = graph.query(_queries["fetch_all_prov_things"])
     return [res[0] for res in results]
+
+def fetch_all_agents(graph):
+    _check_inited()
+    results = graph.query(_queries["fetch_all_agents"])
+    return tuple([res[0] for res in results])
