@@ -72,6 +72,14 @@ def query_init():
               }
         }"""
     )
+
+    _queries["fetch_associated_activities"] = sparql.prepareQuery(
+        """SELECT DISTINCT ?activity WHERE {
+              GRAPH <prov_graph> {
+                 ?activity <http://www.w3.org/ns/prov#wasAssociatedWith> ?agent
+              }
+        }"""
+    )
   
     _inited = True
 
@@ -135,4 +143,9 @@ def fetch_all_prov_things(graph):
 def fetch_all_agents(graph):
     _check_inited()
     results = graph.query(_queries["fetch_all_agents"])
+    return tuple([res[0] for res in results])
+
+def fetch_associated_activities(graph, agent):
+    _check_inited()
+    results = graph.query(_queries["fetch_associated_activities"], initBindings={"?agent": agent})
     return tuple([res[0] for res in results])

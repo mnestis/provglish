@@ -162,3 +162,16 @@ class Check_fetch_all_agents(unittest.TestCase):
         self.assertTrue(URIRef("https://example.net/#alpha") in agents)
         self.assertTrue(URIRef("https://example.net/#bravo") in agents)
         self.assertTrue(URIRef("https://example.net/#charlie") in agents)
+
+class Check_fetch_associated_activities(unittest.TestCase):
+    def test(self):
+        from rdflib import URIRef
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("foxtrot.ttl")
+        graph = prov.load_prov_ontology(graph)
+
+        acts = prov.fetch_associated_activities(graph, URIRef("https://example.net/#john"))
+        self.assertEqual(len(acts), 1)
+        self.assertTrue(URIRef("https://example.net/#baking") in acts)
