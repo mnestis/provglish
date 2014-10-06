@@ -16,6 +16,12 @@ class Check_that_exception_thrown_if_query_before_init(unittest.TestCase):
         graph = load_fixture("bravo.ttl")
         self.assertRaises(prov.QueriesNotInitedError, prov.fetch_all_alternates, [graph])
         
+    def test_to_string(self):
+        import provglish.prov as prov
+        reload(prov)
+        x = prov.QueriesNotInitedError()
+        self.assertEqual(str(x), repr("prov.query_init() not executed before attempting to query"))
+
 class Check_that_prov_queries_not_populated_before_init(unittest.TestCase):
     def test(self):
         import provglish.prov as prov
