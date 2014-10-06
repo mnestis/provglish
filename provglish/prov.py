@@ -85,6 +85,11 @@ def fetch_all_alternates(graph):
     results = graph.query(_queries["fetch_all_alternates"])
     return [res[0] for res in results]
     
+def fetch_related_alternates(graph, entity_uri):
+    uri = rdflib.URIRef(entity_uri)
+    alternates = [res[0] for res in graph.query(_queries["fetch_related_alternates"], initBindings={"?sourceEnt": uri})]
+    return tuple(alternates)
+
 def fetch_all_alternate_groups(graph):
     entities = fetch_all_alternates(graph)
     

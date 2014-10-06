@@ -90,6 +90,30 @@ class Check_alternates(unittest.TestCase):
         for group in groups:
             self.assertEqual(len(group), 3)
 
+    def test_related(self):
+        from rdflib import URIRef
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("charlie.ttl")
+        self.assertNotEqual(len(graph),0)
+        prov.load_prov_ontology(graph)
+
+        alternates = prov.fetch_related_alternates(graph, "https://example.net/#bravo")
+        self.assertEqual(len(alternates),3)
+        self.assertTrue(URIRef("https://example.net/#bravo") in alternates)
+        self.assertTrue(URIRef("https://example.net/#bravo-1") in alternates)
+        self.assertTrue(URIRef("https://example.net/#bravo-2") in alternates)
+
+        alternates = prov.fetch_related_alternates(graph, URIRef("https://example.net/#alpha"))
+        self.assertEqual(len(alternates),3)
+        self.assertTrue(URIRef("https://example.net/#alpha") in alternates)
+        self.assertTrue(URIRef("https://example.net/#alpha-1") in alternates)
+        self.assertTrue(URIRef("https://example.net/#alpha-2") in alternates)
+
+        alternates = prov.fetch_related_alternates(graph, "https://example.net/NOT_A_VALID_URI")
+        self.assertEqual(len(alternates),1)
+
 class Check_fetch_all_prov_things(unittest.TestCase):
     def test(self):
         import provglish.prov as prov
@@ -108,3 +132,4 @@ class Check_fetch_all_prov_things(unittest.TestCase):
 
         things = prov.fetch_all_prov_things(graph)
         self.assertEqual(len(things), 9) 
+
