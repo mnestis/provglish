@@ -10,7 +10,7 @@ class setup_nltk(install):
                 print "    Done."
 
 setup(
-	name="Provglish",
+	name="provglish",
 	version="0.3.3",
 	author="Darren Richardson",
 	packages=["provglish","provglish.tests"],
