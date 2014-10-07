@@ -1,3 +1,6 @@
+v0.3.3, 2014-10-07 -- Queries
+	- Added some more queries to support the natural language work.
+
 v0.3.2, 2014-10-03 -- Specialisations
 	- Added some queries to group specialisations and alternates so that
 	they can be treated consistently. Additionally removed some unused

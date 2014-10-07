@@ -11,7 +11,7 @@ class setup_nltk(install):
 
 setup(
 	name="Provglish",
-	version="0.3.2",
+	version="0.3.3",
 	author="Darren Richardson",
 	packages=["provglish","provglish.tests"],
 	package_data={"provglish":["prov.owl",]},
