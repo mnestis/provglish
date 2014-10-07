@@ -1,6 +1,8 @@
 import rdflib, os
 from rdflib.plugins import sparql
 
+PROV = rdflib.Namespace("http://www.w3.org/ns/prov#")
+
 _queries = {}
 _inited = False
 
