@@ -26,11 +26,11 @@ def _ag_der_ent_by_act_coverage(bindings, graph):
     coverage_list = []
     
     coverage_list.append((bindings["?activity"], PROV.wasAssociatedWith, bindings["?agent"]))
-    coverage_list.append((bindings["?activity"], RDF.type, PROV.Activity))
-    coverage_list.append((bindings["?agent"], RDF.type, PROV.Agent))
+    coverage_list.append((bindings["?activity"], rdf.type, PROV.Activity))
+    coverage_list.append((bindings["?agent"], rdf.type, PROV.Agent))
     coverage_list.append((bindings["?entity"], PROV.qualifiedDerivation, bindings["?deriv"]))
-    coverage_list.append((bindings["?entity"], RDF.type, PROV.Entity))
-    coverage_list.append((bindings["?deriv"], RDF.type, PROV.Derivation))
+    coverage_list.append((bindings["?entity"], rdf.type, PROV.Entity))
+    coverage_list.append((bindings["?deriv"], rdf.type, PROV.Derivation))
     coverage_list.append((bindings["?deriv"], PROV.hadActivity, bindings["?activity"]))
 
     return coverage_list
