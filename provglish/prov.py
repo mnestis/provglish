@@ -106,6 +106,7 @@ def _check_inited():
 
 def load_prov_ontology(graph):
     graph.parse(os.path.dirname(__file__)+"/prov.owl",format="xml")
+    graph.namespace_manager.bind("prov", "http://www.w3.org/ns/prov#")
     return graph
 
 def fetch_less_precise_type(thing, thing_class, graph):
