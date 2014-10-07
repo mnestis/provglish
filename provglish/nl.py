@@ -53,3 +53,69 @@ _ag_der_ent_by_act_template = transform.Template("Agent derived entity by activi
                                                  _ag_der_ent_by_act_binding,
                                                  _ag_der_ent_by_act_coverage,
                                                  _ag_der_ent_by_act_string)
+
+_collection_enum_query = sparql.prepareQuery(
+    """SELECT DISTINCT ?collection ?member WHERE {
+          GRAPH <prov_graph> {
+             ?collection a prov:Collection .
+             ?collection prov:hadMember ?member
+          }
+    } ORDER BY ?collection ?member""", initNs={"prov":PROV})
+
+def _collection_enum_bindings(graph):
+    memberships = graph.query(_collection_enum_query)
+    raw_bindings = memberships.bindings
+
+    grouped_bindings = []
+    current_collection = None
+
+    for binding in raw_bindings:
+        if binding["?collection"] != current_collection:
+            current_collection = binding["?collection"]
+            grouped_bindings.append({"?collection": current_collection,
+                                     "?members": []})
+        grouped_bindings[-1]["?members"].append(binding["?member"])
+
+    return grouped_bindings
+
+def _collection_enum_coverage(bindings, graph):
+    rdf = rdflib.namespace.RDF
+    coverage = []
+
+    coverage.append((bindings["?collection"], rdf.type, PROV.Collection))
+    coverage.append((bindings["?collection"], rdf.type, PROV.Entity))
+
+    for member in bindings["?members"]:
+        coverage.append((bindings["?collection"], PROV.hadMember, member))
+        coverage.append((member, rdf.type, PROV.Entity))
+
+    return coverage
+
+def _collection_enum_string(bindings):
+    
+    collection_lex = lex.urn_from_uri(bindings["?collection"])
+    collection_pl_p = lex.plural_p(collection_lex)
+
+    sentence = {"subject": {"type":"noun_phrase",
+                            "determiner":"the",
+                            "head": collection_lex,
+                            "features": [{"number": "plural" if collection_pl_p else "singular"}]},
+                "verb": "be" if collection_pl_p else "contain",
+                "object": {"type": "coordinated_phrase",
+                           "conjunction": "and",
+                           "coordinates":[]},
+                "features": [{"tense":"past"}]}
+
+    for member in bindings["?members"]:
+        member_lex = lex.urn_from_uri(member)
+        member_pl_p = lex.plural_p(member_lex)
+        sentence["object"]["coordinates"].append({"type": "noun_phrase",
+                                                  "head": member_lex,
+                                                  "features": [{"number": "plural" if member_pl_p else "singular"}]})
+
+    return realise_sentence({"sentence": sentence})
+
+_collection_enum_template = transform.Template("Collection details",
+                                               _collection_enum_bindings,
+                                               _collection_enum_coverage,
+                                               _collection_enum_string)
