@@ -175,3 +175,16 @@ class Check_fetch_associated_activities(unittest.TestCase):
         acts = prov.fetch_associated_activities(graph, URIRef("https://example.net/#john"))
         self.assertEqual(len(acts), 1)
         self.assertTrue(URIRef("https://example.net/#baking") in acts)
+
+class Check_fetch_entities_derived_by_activity(unittest.TestCase):
+    def test(self):
+        from rdflib import URIRef
+        import provglish.prov as prov
+        reload(prov)
+        prov.query_init()
+        graph = load_fixture("foxtrot.ttl")
+        graph = prov.load_prov_ontology(graph)
+
+        ents = prov.fetch_entities_derived_by_activity(graph, URIRef("https://example.net/#baking"))
+        self.assertEqual(len(ents), 1)
+        self.assertTrue(URIRef("https://example.net/#cake") in ents)

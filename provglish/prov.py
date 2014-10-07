@@ -80,7 +80,16 @@ def query_init():
               }
         }"""
     )
-  
+ 
+    _queries["fetch_entities_derived_by_activity"] = sparql.prepareQuery(
+        """SELECT DISTINCT ?entity WHERE {
+              GRAPH <prov_graph> {
+                 ?entity <http://www.w3.org/ns/prov#qualifiedDerivation> ?deriv .
+                 ?deriv <http://www.w3.org/ns/prov#hadActivity> ?activity
+              }
+        }"""
+    )
+ 
     _inited = True
 
 class QueriesNotInitedError(Exception):
@@ -148,4 +157,9 @@ def fetch_all_agents(graph):
 def fetch_associated_activities(graph, agent):
     _check_inited()
     results = graph.query(_queries["fetch_associated_activities"], initBindings={"?agent": agent})
+    return tuple([res[0] for res in results])
+
+def fetch_entities_derived_by_activity(graph, activity):
+    _check_inited()
+    results = graph.query(_queries["fetch_entities_derived_by_activity"], initBindings={"?activity": activity})
     return tuple([res[0] for res in results])
