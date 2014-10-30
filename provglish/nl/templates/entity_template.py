@@ -36,8 +36,6 @@ def _entity_string(bindings):
                           "head":"entity",
                           "determiner":"a"}
 
-    print sentence
-
     return realise_sentence({"sentence":sentence})
 
 entity = transform.Template("Entity", _entity_binding, _entity_coverage, _entity_string)
