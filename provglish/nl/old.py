@@ -3,7 +3,7 @@ from rdflib.plugins import sparql
 import rdflib
 from prov import PROV
 import lexicalisation as lex
-from nlg_tools import SETTINGS, realise_sentence
+from tools import SETTINGS, realise_sentence
 import urllib2
 
 _ag_der_ent_by_act_query = sparql.prepareQuery(
