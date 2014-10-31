@@ -10,6 +10,8 @@ from rdflib import RDF
 
 import urllib2
 
+# This first template deals with the simple existance of activities
+
 _activity_query = sparql.prepareQuery(
     """SELECT ?activity WHERE {
           GRAPH <prov_graph> {
@@ -37,3 +39,46 @@ def _activity_string(bindings):
     return realise_sentence({"sentence":sentence})
 
 activity = transform.Template("Activity", _activity_binding, _activity_coverage, _activity_string)
+
+# This next template handles activities with a start time.
+
+_activity_start_query = sparql.prepareQuery(
+    """SELECT ?activity ?start WHERE {
+          GRAPH <prov_graph> {
+             ?activity a prov:Activity .
+             ?activity prov:startedAtTime ?start
+          }
+       }""",
+    initNs= {"prov":PROV})
+
+def _activity_start_binding(graph):
+    results = graph.query(_activity_start_query)
+    return results.bindings
+
+def _activity_start_coverage(bindings, graph):
+    return [(bindings["?activity"], RDF.type, PROV.Activity),
+            (bindings["?activity"], PROV.startedAtTime, bindings["?start"])]
+
+def _activity_start_string(bindings):
+    sentence = {}
+
+    sentence["subject"] = {"type":"noun_phrase",
+                           "head":lex(bindings["?activity"])}
+
+    sentence["verb"] = "be"
+
+    sentence["object"] = {"type":"noun_phrase",
+                          "head":"activity",
+                          "determiner":"a",
+                          "complements":[{"type":"clause",
+                                          "spec":{"verb":"start",
+                                                  "features":{"tense":"past",
+                                                              "complementiser":"that"},
+                                                  "modifiers":[{"type":"preposition_phrase",
+                                                                "preposition":"at",
+                                                                "noun":bindings["?start"]}]}}]}
+
+    return realise_sentence({"sentence":sentence})
+
+activity_start = transform.Template("Activity start", _activity_start_binding, _activity_start_coverage, _activity_start_string)
+
