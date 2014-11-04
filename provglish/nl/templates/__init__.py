@@ -1,2 +1,2 @@
 from entity_template import entity
-from activity_template import activity, activity_start
+from activity_template import activity, activity_start, activity_end

@@ -82,3 +82,45 @@ def _activity_start_string(bindings):
 
 activity_start = transform.Template("Activity start", _activity_start_binding, _activity_start_coverage, _activity_start_string)
 
+# This next template handles activities with an end time.
+
+_activity_end_query = sparql.prepareQuery(
+    """SELECT ?activity ?end WHERE {
+          GRAPH <prov_graph> {
+             ?activity a prov:Activity .
+             ?activity prov:endedAtTime ?end
+          }
+       }""",
+    initNs= {"prov":PROV})
+
+def _activity_end_binding(graph):
+    results = graph.query(_activity_end_query)
+    return results.bindings
+
+def _activity_end_coverage(bindings, graph):
+    return [(bindings["?activity"], RDF.type, PROV.Activity),
+            (bindings["?activity"], PROV.endedAtTime, bindings["?end"])]
+
+def _activity_end_string(bindings):
+    sentence = {}
+
+    sentence["subject"] = {"type":"noun_phrase",
+                           "head":lex(bindings["?activity"])}
+
+    sentence["verb"] = "be"
+
+    sentence["object"] = {"type":"noun_phrase",
+                          "head":"activity",
+                          "determiner":"a",
+                          "complements":[{"type":"clause",
+                                          "spec":{"verb":"end",
+                                                  "features":{"tense":"past",
+                                                              "complementiser":"that"},
+                                                  "modifiers":[{"type":"preposition_phrase",
+                                                                "preposition":"at",
+                                                                "noun":bindings["?end"]}]}}]}
+
+    return realise_sentence({"sentence":sentence})
+
+activity_end = transform.Template("Activity end", _activity_end_binding, _activity_end_coverage, _activity_end_string)
+
