@@ -1,5 +1,5 @@
 from entity_template import entity
-from activity_template import activity, activity_start, activity_end
+from activity_template import activity, activity_start, activity_end, activity_duration
 from agent_template import agent
 from start_template import start
 from end_template import end

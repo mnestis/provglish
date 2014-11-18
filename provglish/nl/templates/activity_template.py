@@ -124,3 +124,53 @@ def _activity_end_string(bindings):
 
 activity_end = transform.Template("Activity end", _activity_end_binding, _activity_end_coverage, _activity_end_string)
 
+# This next template handles activities with both times.
+
+_activity_duration_query = sparql.prepareQuery(
+    """SELECT ?activity ?start ?end WHERE {
+          GRAPH <prov_graph> {
+             ?activity a prov:Activity .
+             ?activity prov:startedAtTime ?start .
+             ?activity prov:endedAtTime ?end
+          }
+       }""",
+    initNs= {"prov":PROV})
+
+def _activity_duration_binding(graph):
+    results = graph.query(_activity_duration_query)
+    return results.bindings
+
+def _activity_duration_coverage(bindings, graph):
+    return [(bindings["?activity"], RDF.type, PROV.Activity),
+            (bindings["?activity"], PROV.startedAtTime, bindings["?start"]),
+            (bindings["?activity"], PROV.endedAtTime, bindings["?end"])]
+
+def _activity_duration_string(bindings):
+    sentence = {}
+
+    sentence["subject"] = {"type":"noun_phrase",
+                           "head":lex(bindings["?activity"])}
+
+    sentence["verb"] = "be"
+
+    sentence["object"] = {"type":"noun_phrase",
+                          "head":"activity",
+                          "determiner":"a",
+                          "complements":[{"type":"clause",
+                                          "spec":{"verb":"start",
+                                                  "features":{"tense":"past",
+                                                              "complementiser":"that"},
+                                                  "complements":[{"type":"preposition_phrase",
+                                                                  "preposition":"at",
+                                                                  "noun":bindings["?start"]},
+                                                                 {"type":"clause",
+                                                                  "spec":{"verb": "end",
+                                                                          "features": { "tense": "past",
+                                                                                        "complementiser": "and"},
+                                                                          "complements":[{"type":"preposition_phrase",
+                                                                                          "preposition":"at",
+                                                                                          "noun": bindings["?end"]}]}}]}}]}
+    return realise_sentence({"sentence":sentence})
+
+activity_duration = transform.Template("Activity duration", _activity_duration_binding, _activity_duration_coverage, _activity_duration_string)
+
