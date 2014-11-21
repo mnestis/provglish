@@ -118,3 +118,28 @@ class TestAgent(unittest.TestCase):
 
         self.assertEqual(len(sentences), 1)
         self.assertIn("Fred was an agent.", strings)
+
+class TestAttribution(unittest.TestCase):
+    def test_attribution_string(self):
+        graph = load_fixture("nl_templates/attribution.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.attribution.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Entity was attributed to agent.", strings)
+
+    def test_attribution_qualified_string(self):
+        graph = load_fixture("nl_templates/attribution_qualified.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.attribution.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Entity was attributed to agent.", strings)
