@@ -143,3 +143,28 @@ class TestAttribution(unittest.TestCase):
 
         self.assertEqual(len(sentences), 1)
         self.assertIn("Entity was attributed to agent.", strings)
+
+class TestCommunication(unittest.TestCase):
+    def test_communication_string(self):
+        graph = load_fixture("nl_templates/communication.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.communication.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Baking was informed by reading.", strings)
+
+    def test_communication_qualified_string(self):
+        graph = load_fixture("nl_templates/communication_qualified.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.communication.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Baking was informed by reading.", strings)
