@@ -36,6 +36,8 @@ def _entity_string(bindings):
                           "head":"entity",
                           "determiner":"a"}
 
+    sentence["features"] = {"tense": "past"}
+
     return realise_sentence({"sentence":sentence})
 
 entity = transform.Template("Entity", _entity_binding, _entity_coverage, _entity_string)

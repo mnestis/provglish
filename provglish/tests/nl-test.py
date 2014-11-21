@@ -168,3 +168,16 @@ class TestCommunication(unittest.TestCase):
 
         self.assertEqual(len(sentences), 1)
         self.assertIn("Baking was informed by reading.", strings)
+
+class TestEntity(unittest.TestCase):
+    def test_entity_string(self):
+        graph = load_fixture("nl_templates/entity.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.entity.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Ball was an entity.", strings)
