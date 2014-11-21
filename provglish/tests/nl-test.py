@@ -80,3 +80,28 @@ class TestDelegation(unittest.TestCase):
         self.assertEqual(len(sentences), 2)
         self.assertIn("John acted on behalf of James.", strings)
         self.assertIn("Jack did fetching on behalf of Jill.", strings)
+
+class TestAssociation(unittest.TestCase):
+    def test_association_string(self):
+        graph = load_fixture("nl_templates/association.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.association.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Swimming was associated with John.", strings)
+
+    def test_association_qualified_string(self):
+        graph = load_fixture("nl_templates/association_qualified.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.association.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Swimming was associated with John.", strings)

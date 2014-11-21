@@ -18,7 +18,7 @@ _assoc_query = sparql.prepareQuery(
                 ?activity prov:wasAssociatedWith ?agent .
                 ?agent a prov:Agent
              } UNION {
-                ?activity a prov:Entity .
+                ?activity a prov:Activity .
                 ?activity prov:qualifiedAssociation ?assoc .
                 ?assoc a prov:Association .
                 ?assoc prov:agent ?agent .
