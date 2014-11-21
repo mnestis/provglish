@@ -3,10 +3,13 @@
 *.owl
 *.ce
 !/provglish/tests/test_fixtures/*.ttl
-
+!/provglish/tests/test_fixtures/nl_templates/*.ttl
 .coverage
 
 # Ignore emacs temporary files.
 *~
 \#*\#
 .\#*
+
+
+

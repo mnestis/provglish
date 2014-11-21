@@ -1,0 +1,25 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <https://example.net/#> .
+@prefix xsd_1: <http://www.w3.org/2001/XMLSchema> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+_:blank1 a prov:Delegation ;
+	prov:agent ex:Jill .
+
+ex:Jack prov:qualifiedDelegation _:blank1 .
+
+_:blank1 prov:hadActivity ex:fetching .
+
+ex:John prov:actedOnBehalfOf ex:James .
+
+ex:James a prov:Agent .
+
+ex:Jill a prov:Agent .
+
+ex:John a prov:Agent .
+
+ex:Jack a prov:Agent .
+
+ex:fetching a prov:Activity .
