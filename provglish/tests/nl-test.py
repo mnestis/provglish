@@ -181,3 +181,19 @@ class TestEntity(unittest.TestCase):
 
         self.assertEqual(len(sentences), 1)
         self.assertIn("Ball was an entity.", strings)
+
+class TestInvalidation(unittest.TestCase):
+    def test_invalidation_string(self):
+        graph = load_fixture("nl_templates/invalidation.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.invalidation.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 3)
+        self.assertIn("Ent1 was invalidated at 2014-10-10T11:00:00+01:00.", strings)
+        self.assertIn("Ent2 was invalidated by act2.", strings)
+        self.assertIn("Ent3 was invalidated at 2014-10-11T11:00:00+01:00 by act3.", strings)
+

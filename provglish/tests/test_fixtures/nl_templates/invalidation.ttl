@@ -1,0 +1,31 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <https://example.net/#> .
+@prefix xsd_1: <http://www.w3.org/2001/XMLSchema> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+ex:act2 a prov:Activity .
+
+ex:act3 a prov:Activity .
+
+_:blank1 a prov:Invalidation .
+
+ex:ent1 prov:qualifiedInvalidation _:blank1 .
+
+_:blank1 prov:atTime "2014-10-10T11:00:00.000+01:00"^^xsd:dateTime .
+
+_:blank2 a prov:Invalidation ;
+	prov:activity ex:act3 .
+
+ex:ent3 prov:qualifiedInvalidation _:blank2 .
+
+_:blank2 prov:atTime "2014-10-11T11:00:00.000+01:00"^^xsd:dateTime .
+
+ex:ent2 prov:wasInvalidatedBy ex:act2 .
+
+ex:ent1 a prov:Entity .
+
+ex:ent3 a prov:Entity .
+
+ex:ent2 a prov:Entity .
