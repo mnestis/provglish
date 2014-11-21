@@ -1,9 +1,9 @@
 from provglish import transform, prov
 from rdflib.plugins import sparql
 import rdflib
-from prov import PROV
-import lexicalisation as lex
-from tools import SETTINGS, realise_sentence
+from provglish.prov import PROV
+import provglish.lexicalisation as lex
+from provglish.nl.tools import SETTINGS, realise_sentence
 import urllib2
 
 _ag_der_ent_by_act_query = sparql.prepareQuery(
@@ -43,8 +43,8 @@ def _ag_der_ent_by_act_string(bindings):
         "object": {"type": "noun_phrase",
                    "head": lex.urn_from_uri(bindings["?entity"]),
                    "determiner": "a",
-                   "features": [{"number": "plural" if lex.plural_p(lex.urn_from_uri(bindings["?entity"])) else "singular"}]},
-        "features": [{"tense":"past"}]
+                   "features": {"number": "plural" if lex.plural_p(lex.urn_from_uri(bindings["?entity"])) else "singular"}},
+        "features": {"tense":"past"}
     }
 
     return realise_sentence({"sentence": sentence})
@@ -99,19 +99,19 @@ def _collection_enum_string(bindings):
     sentence = {"subject": {"type":"noun_phrase",
                             "determiner":"the",
                             "head": collection_lex,
-                            "features": [{"number": "plural" if collection_pl_p else "singular"}]},
+                            "features": {"number": "plural" if collection_pl_p else "singular"}},
                 "verb": "be" if collection_pl_p else "contain",
                 "object": {"type": "coordinated_phrase",
                            "conjunction": "and",
                            "coordinates":[]},
-                "features": [{"tense":"past"}]}
+                "features": {"tense":"past"}}
 
     for member in bindings["?members"]:
         member_lex = lex.urn_from_uri(member)
         member_pl_p = lex.plural_p(member_lex)
         sentence["object"]["coordinates"].append({"type": "noun_phrase",
                                                   "head": member_lex,
-                                                  "features": [{"number": "plural" if member_pl_p else "singular"}]})
+                                                  "features": {"number": "plural" if member_pl_p else "singular"}})
 
     return realise_sentence({"sentence": sentence})
 
