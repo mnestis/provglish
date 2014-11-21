@@ -105,3 +105,16 @@ class TestAssociation(unittest.TestCase):
 
         self.assertEqual(len(sentences), 1)
         self.assertIn("Swimming was associated with John.", strings)
+
+class TestAgent(unittest.TestCase):
+    def test_agent_string(self):
+        graph = load_fixture("nl_templates/agent.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.agent.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Fred was an agent.", strings)

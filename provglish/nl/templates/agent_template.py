@@ -36,6 +36,8 @@ def _agent_string(bindings):
                           "head":"agent",
                           "determiner":"a"}
 
+    sentence["features"] = {"tense": "past"}
+
     return realise_sentence({"sentence":sentence})
 
 agent = transform.Template("Agent", _agent_binding, _agent_coverage, _agent_string)
