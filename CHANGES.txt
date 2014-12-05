@@ -1,3 +1,8 @@
+v0.4.0, 2014-12-05 -- Natural language templates
+	- Added a load of templates that create natural language explanations.
+	- Added the corresponding dependency, nlgserv, available on PyPI
+	- The transform subpackage does not yet work with these NL templates.
+
 v0.3.3, 2014-10-07 -- Queries
 	- Added some more queries to support the natural language work.
 
