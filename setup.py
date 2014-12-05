@@ -24,12 +24,12 @@ setup(
 		"rdflib >= 4.1.2",
 		"inflect >= 0.2.4",
 		"nltk >= 2.7.6",
-		"nlgserv >= 0.1.0",
+		"nlgserv >= 0.2.1",
 	],
 	requires=[
 		"rdflib (>=4.1.2)",
 		"inflect (>=0.2.4)",
 		"nltk (>=2.7.6)",
-		"nlgserv (>=0.1.0)",
+		"nlgserv (>=0.2.1)",
 	],
 )
