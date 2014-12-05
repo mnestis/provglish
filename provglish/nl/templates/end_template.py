@@ -17,7 +17,8 @@ _end_query = sparql.prepareQuery(
              {
                 ?activity a prov:Activity .
                 ?activity prov:wasEndedBy ?trigger .
-                ?ender a prov:Entity
+                ?trigger a prov:Entity .
+                FILTER NOT EXISTS { ?activity prov:qualifiedEnd ?end }
              } UNION {
                 ?activity a prov:Activity .
                 ?activity prov:qualifiedEnd ?end .
@@ -64,8 +65,8 @@ def _end_coverage(bindings, graph):
             coverage.append((bindings["?end"], PROV.atTime, bindings["?time"]))
     else:
         # This is an unqualified relation
-        coverage.extend([(bindings["?activity"], PROV.wasEndedBy, bindings["?ender"]),
-                         (bindings["?ender"], RDF.type, PROV.Activity)])
+        coverage.extend([(bindings["?activity"], PROV.wasEndedBy, bindings["?trigger"]),
+                         (bindings["?trigger"], RDF.type, PROV.Entity)])
 
     return coverage
 

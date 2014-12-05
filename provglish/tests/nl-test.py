@@ -197,3 +197,87 @@ class TestInvalidation(unittest.TestCase):
         self.assertIn("Ent2 was invalidated by act2.", strings)
         self.assertIn("Ent3 was invalidated at 2014-10-11T11:00:00+01:00 by act3.", strings)
 
+class TestActivity(unittest.TestCase):
+    def test_activity(self):
+        graph = load_fixture("nl_templates/activity.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.activity.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Activity was an activity.", strings)
+
+    def test_activity_start(self):
+        graph = load_fixture("nl_templates/activity_start.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.activity_start.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Activity was an activity that started at 2011-11-16T16:05:00+00:00.", strings)
+
+    def test_activity_end(self):
+        graph = load_fixture("nl_templates/activity_end.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.activity_end.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Activity was an activity that ended at 2015-11-16T16:05:00+00:00.", strings)
+
+    def test_activity_times(self):
+        graph = load_fixture("nl_templates/activity_times.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.activity_duration.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        self.assertEqual(len(sentences), 1)
+        self.assertIn("Activity was an activity that started at 2015-11-16T16:05:00+00:00 and ended at 2016-11-16T16:05:00+00:00.", strings)
+
+class TestEnd(unittest.TestCase):
+    def test_end(self):
+        graph = load_fixture("nl_templates/end.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.end.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        print strings
+
+        self.assertEqual(len(sentences), 4)
+        self.assertIn("The end of activity1 was triggered by trigger1.", strings)
+        self.assertIn("The activity2 was ended by ender2.", strings)
+        self.assertIn("The activity3 was ended at 2014-10-10T11:00:00+01:00.", strings)
+        self.assertIn("The activity4 was ended at 2014-10-10T11:00:00+01:00 by ender4.", strings)
+
+class TestStart(unittest.TestCase):
+    def test_start(self):
+        graph = load_fixture("nl_templates/start.ttl")
+        graph = prov.load_prov_ontology(graph)
+        sentences = provglish.nl.templates.start.generate_sentences(graph)
+
+        strings = []
+        for sentence in sentences:
+            strings.append(str(sentence))
+
+        print strings
+
+        self.assertEqual(len(sentences), 4)
+        self.assertIn("The start of activity1 was triggered by trigger1.", strings)
+        self.assertIn("The activity2 was started by starter2.", strings)
+        self.assertIn("The activity3 was started at 2014-10-10T11:00:00+01:00.", strings)
+        self.assertIn("The activity4 was started at 2014-10-10T11:00:00+01:00 by starter4.", strings)

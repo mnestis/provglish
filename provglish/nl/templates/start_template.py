@@ -17,7 +17,8 @@ _start_query = sparql.prepareQuery(
              {
                 ?activity a prov:Activity .
                 ?activity prov:wasStartedBy ?trigger .
-                ?starter a prov:Entity
+                ?trigger a prov:Entity .
+                FILTER NOT EXISTS {?activity prov:qualifiedStart ?start}
              } UNION {
                 ?activity a prov:Activity .
                 ?activity prov:qualifiedStart ?start .
@@ -64,8 +65,8 @@ def _start_coverage(bindings, graph):
             coverage.append((bindings["?start"], PROV.atTime, bindings["?time"]))
     else:
         # This is an unqualified relation
-        coverage.extend([(bindings["?activity"], PROV.wasStartedBy, bindings["?starter"]),
-                         (bindings["?starter"], RDF.type, PROV.Activity)])
+        coverage.extend([(bindings["?activity"], PROV.wasStartedBy, bindings["?trigger"]),
+                         (bindings["?trigger"], RDF.type, PROV.Entity)])
 
     return coverage
 

@@ -36,6 +36,8 @@ def _activity_string(bindings):
                           "head":"activity",
                           "determiner":"a"}
 
+    sentence["features"] = {"tense": "past"}
+
     return realise_sentence({"sentence":sentence})
 
 activity = transform.Template("Activity", _activity_binding, _activity_coverage, _activity_string)
@@ -78,6 +80,8 @@ def _activity_start_string(bindings):
                                                                 "preposition":"at",
                                                                 "noun":bindings["?start"]}]}}]}
 
+    sentence["features"] = {"tense": "past"}
+
     return realise_sentence({"sentence":sentence})
 
 activity_start = transform.Template("Activity start", _activity_start_binding, _activity_start_coverage, _activity_start_string)
@@ -119,6 +123,8 @@ def _activity_end_string(bindings):
                                                   "modifiers":[{"type":"preposition_phrase",
                                                                 "preposition":"at",
                                                                 "noun":bindings["?end"]}]}}]}
+
+    sentence["features"] = {"tense": "past"}
 
     return realise_sentence({"sentence":sentence})
 
@@ -170,6 +176,8 @@ def _activity_duration_string(bindings):
                                                                           "complements":[{"type":"preposition_phrase",
                                                                                           "preposition":"at",
                                                                                           "noun": bindings["?end"]}]}}]}}]}
+    sentence["features"] = {"tense": "past"}
+
     return realise_sentence({"sentence":sentence})
 
 activity_duration = transform.Template("Activity duration", _activity_duration_binding, _activity_duration_coverage, _activity_duration_string)

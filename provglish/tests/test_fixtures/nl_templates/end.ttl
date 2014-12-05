@@ -1,0 +1,44 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <https://example.net/#> .
+@prefix xsd_1: <http://www.w3.org/2001/XMLSchema> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+ex:activity1 prov:wasEndedBy ex:trigger1 .
+
+_:blank1 a prov:End ;
+	prov:entity ex:trigger4 .
+
+ex:activity4 prov:qualifiedEnd _:blank1 .
+
+_:blank1 prov:atTime "2014-10-10T11:00:00.000+01:00"^^xsd:dateTime ;
+	prov:hadActivity ex:ender4 .
+
+_:blank2 a prov:End .
+
+ex:activity3 prov:qualifiedEnd _:blank2 .
+
+_:blank2 prov:atTime "2014-10-10T11:00:00.000+01:00"^^xsd:dateTime .
+
+_:blank3 a prov:End .
+
+ex:activity2 prov:qualifiedEnd _:blank3 .
+
+_:blank3 prov:hadActivity ex:ender2 .
+
+ex:trigger1 a prov:Entity .
+
+ex:trigger4 a prov:Entity .
+
+ex:ender4 a prov:Activity .
+
+ex:activity1 a prov:Activity .
+
+ex:activity2 a prov:Activity .
+
+ex:activity3 a prov:Activity .
+
+ex:activity4 a prov:Activity .
+
+ex:ender2 a prov:Activity .
