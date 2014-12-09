@@ -10,3 +10,17 @@ from delegation_template import delegation
 from attribution_template import attribution
 from association_template import association
 from invalidation_template import invalidation
+
+all_templates = [
+    entity,
+    activity, activity_start, activity_end, activity_duration,
+    agent,
+    start,
+    end,
+    generation,
+    usage,
+    communication,
+    delegation,
+    attribution,
+    association,
+    invalidation]
