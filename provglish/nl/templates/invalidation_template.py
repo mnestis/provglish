@@ -55,7 +55,7 @@ def _inv_coverage(bindings, graph):
                 (bindings["?activity"], RDF.type, PROV.Activity),
                 (bindings["?entity"], PROV.wasInvalidatedBy, bindings["?activity"])]
 
-def _inv_string(bindings):
+def _inv_string(bindings, history):
     sentence = {}
     
     sentence["object"] = {"type": "noun_phrase",

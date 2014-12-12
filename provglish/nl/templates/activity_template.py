@@ -28,7 +28,7 @@ def _activity_binding(graph):
 def _activity_coverage(bindings, graph):
     return [(bindings["?activity"], RDF.type, PROV.Activity)]
 
-def _activity_string(bindings):
+def _activity_string(bindings, history):
     sentence = {}
     sentence["subject"] = lex(bindings["?activity"])
     sentence["verb"] = "be"
@@ -61,7 +61,7 @@ def _activity_start_coverage(bindings, graph):
     return [(bindings["?activity"], RDF.type, PROV.Activity),
             (bindings["?activity"], PROV.startedAtTime, bindings["?start"])]
 
-def _activity_start_string(bindings):
+def _activity_start_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = {"type":"noun_phrase",
@@ -105,7 +105,7 @@ def _activity_end_coverage(bindings, graph):
     return [(bindings["?activity"], RDF.type, PROV.Activity),
             (bindings["?activity"], PROV.endedAtTime, bindings["?end"])]
 
-def _activity_end_string(bindings):
+def _activity_end_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = {"type":"noun_phrase",
@@ -151,7 +151,7 @@ def _activity_duration_coverage(bindings, graph):
             (bindings["?activity"], PROV.startedAtTime, bindings["?start"]),
             (bindings["?activity"], PROV.endedAtTime, bindings["?end"])]
 
-def _activity_duration_string(bindings):
+def _activity_duration_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = {"type":"noun_phrase",

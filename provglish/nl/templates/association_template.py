@@ -45,7 +45,7 @@ def _assoc_coverage(bindings, graph):
                 (bindings["?activity"], PROV.wasAssociatedWith, bindings["?agent"]),
                 (bindings["?agent"], RDF.type, PROV.Agent)]
 
-def _assoc_string(bindings):
+def _assoc_string(bindings, history):
     sentence = {}
 
     sentence["object"] = {"type": "noun_phrase",

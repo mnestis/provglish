@@ -57,7 +57,7 @@ def _usage_coverage(bindings, graph):
                 (bindings["?activity"], PROV.used, bindings["?entity"]),
                 (bindings["?activity"], RDF.type, PROV.Activity)]
 
-def _usage_string(bindings):
+def _usage_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = lex(bindings["?activity"])

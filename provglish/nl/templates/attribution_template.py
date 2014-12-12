@@ -45,7 +45,7 @@ def _attribution_coverage(bindings, graph):
                 (bindings["?entity"], PROV.wasAttributedTo, bindings["?agent"]),
                 (bindings["?agent"], RDF.type, PROV.Agent)]
 
-def _attribution_string(bindings):
+def _attribution_string(bindings, history):
     sentence = {}
 
     sentence["object"] = {"type": "noun_phrase",

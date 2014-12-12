@@ -11,6 +11,7 @@ class Transformer():
     
     def __init__(self):
         self._registered_templates = []
+        self._history = {}
 
     def transform(self, graph):
         prov.load_prov_ontology(graph)
@@ -96,6 +97,13 @@ class Transformer():
         
         return chosen_sentences
 
+    def generate_paragraph(self, sentences):
+        paragraph = ""
+        for sentence in sentences:
+            paragraph += sentence.generate_string(self._history) + "\n"
+            
+        return paragraph
+
     def register_template(self, template):
         self._registered_templates.append(template)
 
@@ -112,16 +120,12 @@ class Template():
     def coverage(self, bindings, graph):
         return self.__coverage_function(bindings, graph)
         
-    def make_string(self, bindings):
-        return self.__string_function(bindings)
-    
     def generate_sentences(self, graph):
         sentences = []
         bindings = self.bindings(graph)
         for binding in bindings:
             coverage = self.coverage(binding, graph)
-            sentence_string = self.make_string(binding)
-            sentences.append(Sentence(sentence_string, coverage, binding))
+            sentences.append(Sentence(self.__string_function, coverage, binding))
         return sentences    
         
     def __str__(self):
@@ -129,8 +133,8 @@ class Template():
         
 class Sentence():
     
-    def __init__(self, sentence_string, coverage, bindings, tracked_ids=None):
-        self._sentence_string = sentence_string
+    def __init__(self, string_generator, coverage, bindings, tracked_ids=None):
+        self._string_generator = string_generator
         self._coverage = coverage
         self._coverage_hash = self._calculate_coverage_hash()
         self._bindings = bindings
@@ -149,7 +153,10 @@ class Sentence():
         return hash(tuple(coverage))
             
     def __str__(self):
-        return self._sentence_string
+        return self._string_generator(self._bindings, {})
+
+    def generate_string(self, history):
+        return self._string_generator(self._bindings, history)
 
     @staticmethod
     def _order_triples(tripleA, tripleB):

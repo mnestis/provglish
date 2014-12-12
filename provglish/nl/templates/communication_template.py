@@ -45,7 +45,7 @@ def _comm_coverage(bindings, graph):
                 (bindings["?act_2"], RDF.type, PROV.Activity),
                 (bindings["?act_1"], PROV.wasInformedBy, bindings["?act_2"])]
 
-def _comm_string(bindings):
+def _comm_string(bindings, history):
     sentence = {}
     
     sentence["subject"] = lex(bindings["?act_2"])

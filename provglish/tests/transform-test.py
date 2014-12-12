@@ -37,7 +37,7 @@ class Check_Template_str(unittest.TestCase):
 class Check_sentence_init(unittest.TestCase):
     def test(self):
         from provglish import transform
-        s = transform.Sentence("This is a string", ((1,2,3),(4,5,6)), None)
+        s = transform.Sentence(lambda x, y: "This is a string", ((1,2,3),(4,5,6)), None)
         self.assertEqual(str(s),"This is a string")
         self.assertEqual(s.coverage_hash, hash(((1,2,3),(4,5,6))))
 

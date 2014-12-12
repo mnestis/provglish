@@ -70,7 +70,7 @@ def _end_coverage(bindings, graph):
 
     return coverage
 
-def _end_string(bindings):
+def _end_string(bindings, history):
 
     sentence = {}
 

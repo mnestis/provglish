@@ -56,7 +56,7 @@ def _generation_coverage(bindings, graph):
                 (bindings["?entity"], PROV.wasGeneratedBy, bindings["?activity"]),
                 (bindings["?activity"], RDF.type, PROV.Activity)]
 
-def _generation_string(bindings):
+def _generation_string(bindings, history):
     sentence = {}
 
     sentence["object"] = {"type": "noun_phrase",

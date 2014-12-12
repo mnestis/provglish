@@ -57,7 +57,7 @@ def _del_coverage(bindings, graph):
                 (bindings["?delegate"], PROV.actedOnBehalfOf, bindings["?delegator"]),
                 (bindings["?delegator"], RDF.type, PROV.Agent)]
 
-def _del_string(bindings):
+def _del_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = lex(bindings["?delegate"])

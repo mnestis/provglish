@@ -26,7 +26,7 @@ def _agent_binding(graph):
 def _agent_coverage(bindings, graph):
     return [(bindings["?agent"], RDF.type, PROV.Agent)]
 
-def _agent_string(bindings):
+def _agent_string(bindings, history):
     sentence = {}
     sentence["subject"] = {"type": "noun_phrase",
                            "head": lex(bindings["?agent"]),

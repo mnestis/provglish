@@ -26,7 +26,7 @@ def _entity_binding(graph):
 def _entity_coverage(bindings, graph):
     return [(bindings["?entity"], RDF.type, PROV.Entity)]
 
-def _entity_string(bindings):
+def _entity_string(bindings, history):
     sentence = {}
     sentence["subject"] = {"type": "noun_phrase",
                            "head": lex(bindings["?entity"]),
