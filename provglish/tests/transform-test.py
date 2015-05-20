@@ -52,3 +52,19 @@ class Check_Sentence_order_triples(unittest.TestCase):
         self.assertEqual(ot((0,1,0),(0,0,1)), 1)
         self.assertEqual(ot((0,1,0),(1,0,0)), -1)
         self.assertEqual(ot((1,0,0),(0,1,0)), 1)
+
+class Check_sentence_string_with_history(unittest.TestCase):
+    def test(self):
+        from provglish import transform
+        
+        def generate_string(bindings, history):
+            if "test" in history:
+                return "The string is %s." % (history["test"])
+            else:
+                return "This isn't the string you're looking for."
+
+        sentence = transform.Sentence(generate_string, [], {})
+
+        self.assertEqual(str(sentence), "This isn't the string you're looking for.")
+        self.assertEqual(sentence.generate_string({}), "This isn't the string you're looking for.")
+        self.assertEqual(sentence.generate_string({"test": "working"}), "The string is working.")
