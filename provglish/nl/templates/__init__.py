@@ -10,6 +10,9 @@ from delegation_template import delegation
 from attribution_template import attribution
 from association_template import association
 from invalidation_template import invalidation
+from old_templates import _ag_der_ent_by_act_template
+from old_templates import _collection_enum_template
+from old_templates import _der_ent_by_act_template
 
 all_templates = [
     entity,
@@ -23,4 +26,7 @@ all_templates = [
     delegation,
     attribution,
     association,
-    invalidation]
+    invalidation,
+    _ag_der_ent_by_act_template,
+    _collection_enum_template,
+    _der_ent_by_act_template,]
