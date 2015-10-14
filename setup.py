@@ -15,7 +15,7 @@ setup(
 	author="Darren Richardson",
 	packages=find_packages(exclude=["*.tests"]),
 	package_data={"provglish":["prov.owl",]},
-	scripts=["bin/prov-o-query","bin/prov2ce"],
+	scripts=["bin/prov-o-query","bin/prov2ce", "bin/prov2provglish"],
 	license="LICENSE.txt",
 	description="Converting PROV to Controlled English",
 	long_description=open("README.md").read(),

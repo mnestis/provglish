@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+import rdflib
+from provglish.nl import transformer
+
+from sys import argv
+
+graph = rdflib.graph.ConjunctiveGraph()
+graph.parse(argv[1],format="turtle", publicID="prov_graph")
+
+chosen_sentences = transformer.transform(graph)
+
+output_file = open(argv[2], "w")
+output_file.writelines([str(sentence)+"\n" for sentence in chosen_sentences])
+output_file.flush()
+output_file.close()
