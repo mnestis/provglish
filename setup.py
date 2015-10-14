@@ -1,9 +1,9 @@
+import setuptools
 from setuptools import setup
 from setuptools.command.install import install as _install
 
-class install(_install):
+class post_install(_install):
 	def run(self):
-		_install.run(self)
 		import nltk	
 		print "  Downloading all the NLTK files. This may take some time..."
                 nltk.downloader.download("maxent_treebank_pos_tagger")
@@ -31,5 +31,5 @@ setup(
 		"nltk (>=2.7.6)",
 		"nlgserv (==0.2.3)",
 	],
-        cmdclass={"install": install},
+        cmdclass={"post_install": post_install},
 )
