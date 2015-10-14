@@ -76,6 +76,6 @@ class Check_multi_prop_string_function(unittest.TestCase):
         
         bindings = ce._multi_prop_binding(graph)
         for binding in bindings:
-            sentence = ce._multi_prop_string(binding)
+            sentence = ce._multi_prop_string(binding, {})
         # We're not going to actually test the string itself, but assume that if there's no exception, it's worked.
         

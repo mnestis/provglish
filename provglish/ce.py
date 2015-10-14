@@ -179,7 +179,7 @@ def _def_coverage(bindings, graph):
     return coverage_list
 
 
-def _def_string(bindings):
+def _def_string(bindings, history):
     return "there is %s named <%s>.\n" % (_nl.a(classes[str(bindings["?class"])]), bindings["?object"])
 
 _multi_prop_binding_query = sparql.prepareQuery("""
@@ -195,6 +195,9 @@ _multi_prop_binding_query = sparql.prepareQuery("""
 def _multi_prop_binding(graph):
     results = graph.query(_multi_prop_binding_query)
     raw_bindings = results.bindings
+
+    if len(raw_bindings)==0:
+        return []
 
     grouped_bindings = []
     current_subject = None
@@ -256,7 +259,7 @@ def _multi_prop_coverage(bindings, graph):
             
     return coverage_list
 
-def _multi_prop_string(bindings):
+def _multi_prop_string(bindings, history):
     thing1 = bindings["?thing1"]
     thing1_class = classes[str(bindings["?thing1_class"])]
     
