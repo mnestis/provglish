@@ -19,7 +19,6 @@ setup(
 	license="LICENSE.txt",
 	description="Converting PROV to Controlled English",
 	long_description=open("README.md").read(),
-	cmdclass={"install": install},
 	install_requires=[
 		"rdflib >= 4.1.2",
 		"inflect >= 0.2.4",
@@ -32,4 +31,5 @@ setup(
 		"nltk (>=2.7.6)",
 		"nlgserv (==0.2.3)",
 	],
+        cmdclass={"install": install},
 )
