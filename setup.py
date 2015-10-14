@@ -1,5 +1,5 @@
 import setuptools
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
 
 class post_install(_install):
@@ -13,7 +13,7 @@ setup(
 	name="provglish",
 	version="0.4.0",
 	author="Darren Richardson",
-	packages=["provglish","provglish.tests"],
+	packages=find_packages(exclude=["*.tests"]),
 	package_data={"provglish":["prov.owl",]},
 	scripts=["bin/prov-o-query","bin/prov2ce"],
 	license="LICENSE.txt",
