@@ -3,7 +3,7 @@ from setuptools.command.install import install as _install
 
 class install(_install):
 	def run(self):
-		_install.run(self)
+		_install.do_egg_install(self)
 		import nltk	
 		print "  Downloading all the NLTK files. This may take some time..."
                 nltk.downloader.download("maxent_treebank_pos_tagger")
