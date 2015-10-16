@@ -7,6 +7,7 @@ class post_install(_install):
 		import nltk	
 		print "  Downloading all the NLTK files. This may take some time..."
                 nltk.downloader.download("maxent_treebank_pos_tagger")
+                nltk.downloader.download("averaged_perceptron_tagger")
                 print "    Done."
 
 setup(
