@@ -17,7 +17,8 @@ class Transformer():
         prov.load_prov_ontology(graph)
         sentences = self.render_graph(graph)
         sentences_pool = self.remove_dup_coverage(sentences)
-        return self.choose_sentences(sentences_pool)     
+        #return self.choose_sentences(sentences_pool)     
+        return sentences_pool
 
     def render_graph(self, graph):
         sentences = []
