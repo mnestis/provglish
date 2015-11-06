@@ -3,6 +3,7 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -30,7 +31,7 @@ def _activity_coverage(bindings, graph):
 
 def _activity_string(bindings, history):
     sentence = {}
-    sentence["subject"] = lex(bindings["?activity"])
+    sentence["subject"] = act_spec(bindings["?activity"])
     sentence["verb"] = "be"
     sentence["object"] = {"type":"noun_phrase",
                           "head":"activity",
@@ -65,7 +66,7 @@ def _activity_start_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = {"type":"noun_phrase",
-                           "head":lex(bindings["?activity"])}
+                           "head": act_spec(bindings["?activity"])}
 
     sentence["verb"] = "be"
 
@@ -109,7 +110,7 @@ def _activity_end_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = {"type":"noun_phrase",
-                           "head":lex(bindings["?activity"])}
+                           "head":act_spec(bindings["?activity"])}
 
     sentence["verb"] = "be"
 
@@ -155,7 +156,7 @@ def _activity_duration_string(bindings, history):
     sentence = {}
 
     sentence["subject"] = {"type":"noun_phrase",
-                           "head":lex(bindings["?activity"])}
+                           "head":act_spec(bindings["?activity"])}
 
     sentence["verb"] = "be"
 

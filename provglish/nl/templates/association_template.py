@@ -3,6 +3,8 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import agent_uri_to_noun_phrase_spec as ag_spec
+from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -49,13 +51,13 @@ def _assoc_string(bindings, history):
     sentence = {}
 
     sentence["object"] = {"type": "noun_phrase",
-                          "head": lex(bindings["?activity"])}
+                          "head": act_spec(bindings["?activity"])}
 
     sentence["verb"] = "associate"
 
     sentence["modifiers"] = [{"type": "preposition_phrase",
                                "preposition": "with",
-                               "noun": lex(bindings["?agent"])}]
+                               "noun": ag_spec(bindings["?agent"])}]
 
     sentence["features"] = {"tense": "past",
                             "passive": "true"}

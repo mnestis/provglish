@@ -13,6 +13,9 @@ from invalidation_template import invalidation
 from old_templates import _ag_der_ent_by_act_template
 from old_templates import _collection_enum_template
 from old_templates import _der_ent_by_act_template
+from verbed_generation_template import generation as verbed_generation
+from verbed_generation_agent_template import generation as verbed_generation_agent
+from verbed_generation_agent_from_template import generation as verbed_generation_agent_from
 
 all_templates = [
     entity,
@@ -29,4 +32,8 @@ all_templates = [
     invalidation,
     _ag_der_ent_by_act_template,
     _collection_enum_template,
-    _der_ent_by_act_template,]
+    _der_ent_by_act_template,
+    verbed_generation,
+    verbed_generation_agent,
+    verbed_generation_agent_from,
+]

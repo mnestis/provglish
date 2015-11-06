@@ -3,6 +3,7 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -48,9 +49,9 @@ def _comm_coverage(bindings, graph):
 def _comm_string(bindings, history):
     sentence = {}
     
-    sentence["subject"] = lex(bindings["?act_2"])
+    sentence["subject"] = act_spec(bindings["?act_2"])
     sentence["verb"] = "inform"
-    sentence["object"] = lex(bindings["?act_1"])
+    sentence["object"] = act_spec(bindings["?act_1"])
     
     sentence["features"] = {"tense": "past",
                             "passive": "true"}

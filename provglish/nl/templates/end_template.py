@@ -3,6 +3,7 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -80,7 +81,7 @@ def _end_string(bindings, history):
             # This is a sentence where we talk about triggering.
             sentence["verb"] = "trigger"
             sentence["object"] = {"type": "noun_phrase",
-                                  "head": "end of %s" % (lex(bindings["?activity"]),),
+                                  "head": "end of %s" % (act_spec(bindings["?activity"]),),
                                   "determiner": "the",
                                   "number": "singular"}
 
@@ -92,7 +93,7 @@ def _end_string(bindings, history):
         else:
             sentence["verb"] = "end"
             sentence["object"] = {"type": "noun_phrase",
-                                  "head": lex(bindings["?activity"]),
+                                  "head": act_spec(bindings["?activity"]),
                                   "determiner": "the",
                                   "number": "singular"}
             sentence["features"] = {"tense": "past",
@@ -111,7 +112,7 @@ def _end_string(bindings, history):
         # This is an unqualified start
         sentence["verb"] = "trigger"
         sentence["object"] = {"type": "noun_phrase",
-                              "head": "end of %s" % (lex(bindings["?activity"]),),
+                              "head": "end of %s" % (act_spec(bindings["?activity"]),),
                               "determiner": "the"}
         sentence["subject"] = {"type": "noun_phrase",
                                "head": lex(bindings["?trigger"])}

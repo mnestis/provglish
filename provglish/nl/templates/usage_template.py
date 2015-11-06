@@ -3,6 +3,8 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import entity_uri_to_noun_phrase_spec as ent_spec
+from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -60,7 +62,7 @@ def _usage_coverage(bindings, graph):
 def _usage_string(bindings, history):
     sentence = {}
 
-    sentence["subject"] = lex(bindings["?activity"])
+    sentence["subject"] = act_spec(bindings["?activity"])
 
     sentence["verb"] = "use"
 
@@ -69,9 +71,7 @@ def _usage_string(bindings, history):
     sentence["modifiers"] = []
 
     if "?entity" in bindings:
-        sentence["object"] = {"type": "noun_phrase",
-                              "head": lex(bindings["?entity"]),
-                              "features": {"number": "plural" if plural_p(bindings["?entity"]) else "singular"}}
+        sentence["object"] = ent_spec(bindings["?entity"])
 
     else:
         sentence["object"] = "something"

@@ -3,6 +3,7 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import agent_uri_to_noun_phrase_spec as ag_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -28,9 +29,7 @@ def _agent_coverage(bindings, graph):
 
 def _agent_string(bindings, history):
     sentence = {}
-    sentence["subject"] = {"type": "noun_phrase",
-                           "head": lex(bindings["?agent"]),
-                           "features":{"number": "plural" if plural_p(bindings["?agent"]) else "singular"}}
+    sentence["subject"] = ag_spec(bindings["?agent"])
     sentence["verb"] = "be"
     sentence["object"] = {"type":"noun_phrase",
                           "head":"agent",

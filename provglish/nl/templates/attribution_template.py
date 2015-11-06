@@ -3,6 +3,8 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import entity_uri_to_noun_phrase_spec as ent_spec
+from provglish.nl.lexicalisation import agent_uri_to_noun_phrase_spec as ag_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -48,14 +50,12 @@ def _attribution_coverage(bindings, graph):
 def _attribution_string(bindings, history):
     sentence = {}
 
-    sentence["object"] = {"type": "noun_phrase",
-                          "head": lex(bindings["?entity"]),
-                          "features": {"number": "plural" if plural_p(bindings["?entity"]) else "singular"}}
+    sentence["object"] = ent_spec(bindings["?entity"])
     sentence["verb"] = "attribute"
 
     sentence["modifiers"] = [{"type": "preposition_phrase",
                                "preposition": "to",
-                               "noun": lex(bindings["?agent"])}]
+                               "noun": ag_spec(bindings["?agent"])}]
 
     sentence["features"] = {"tense": "past",
                             "passive": "true"}

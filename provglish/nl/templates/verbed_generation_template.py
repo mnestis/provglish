@@ -6,6 +6,9 @@ from provglish.nl.tools import SETTINGS, realise_sentence
 from provglish.nl.lexicalisation import entity_uri_to_noun_phrase_spec as ent_spec
 from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
 
+from provglish.nl.lexicalisation import uri_contains_verb as verb_p
+from provglish.nl.lexicalisation import activity_uri_to_verb_phrase_spec as verb_spec
+
 import rdflib
 from rdflib.plugins import sparql
 from rdflib import RDF
@@ -35,7 +38,14 @@ _generation_query = sparql.prepareQuery(
 
 def _generation_binding(graph):
     results = graph.query(_generation_query)
-    return results.bindings
+    initial_bindings = results.bindings
+    filtered_bindings = []
+    for binding in initial_bindings:
+        if "?activity" in binding:
+            if verb_p(binding["?activity"]):
+                filtered_bindings.append(binding)
+
+    return filtered_bindings
 
 def _generation_coverage(bindings, graph):
     if "?generation" in bindings:
@@ -63,7 +73,7 @@ def _generation_string(bindings, history):
 
     sentence["object"] = ent_spec(bindings["?entity"])
 
-    sentence["verb"] = "generate"
+    sentence["verb"] = verb_spec(bindings["?activity"])
 
     sentence["features"] = {"tense": "past",
                             "passive": "true"}
@@ -74,11 +84,6 @@ def _generation_string(bindings, history):
         sentence["modifiers"].append({"type":"preposition_phrase",
                                         "preposition": "at",
                                         "noun": bindings["?time"]})
-
-    if "?activity" in bindings:
-        sentence["modifiers"].append({"type":"preposition_phrase",
-                                        "preposition":"by",
-                                        "noun": act_spec(bindings["?activity"])})
 
     return realise_sentence({"sentence":sentence})
 

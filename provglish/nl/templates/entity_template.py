@@ -3,6 +3,7 @@ from provglish.lexicalisation import urn_from_uri as lex
 from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
+from provglish.nl.lexicalisation import entity_uri_to_noun_phrase_spec as ent_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -28,9 +29,7 @@ def _entity_coverage(bindings, graph):
 
 def _entity_string(bindings, history):
     sentence = {}
-    sentence["subject"] = {"type": "noun_phrase",
-                           "head": lex(bindings["?entity"]),
-                           "features":{"number": "plural" if plural_p(bindings["?entity"]) else "singular"}}
+    sentence["subject"] = ent_spec(bindings["?entity"])
     sentence["verb"] = "be"
     sentence["object"] = {"type":"noun_phrase",
                           "head":"entity",

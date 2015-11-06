@@ -6,6 +6,10 @@ import provglish.lexicalisation as lex
 from provglish.nl.tools import SETTINGS, realise_sentence
 import urllib2
 
+from provglish.nl.lexicalisation import activity_uri_to_verb_phrase_spec as verb_spec
+from provglish.nl.lexicalisation import agent_uri_to_noun_phrase_spec as ag_spec
+from provglish.nl.lexicalisation import entity_uri_to_noun_phrase_spec as ent_spec
+
 _ag_der_ent_by_act_query = sparql.prepareQuery(
     """SELECT ?agent ?entity ?activity ?deriv WHERE {
           GRAPH <prov_graph>
@@ -38,12 +42,9 @@ def _ag_der_ent_by_act_coverage(bindings, graph):
 def _ag_der_ent_by_act_string(bindings, history):
     
     sentence = {
-        "subject": lex.urn_from_uri(bindings["?agent"]),
-        "verb": lex.urn_from_uri(bindings["?activity"]),
-        "object": {"type": "noun_phrase",
-                   "head": lex.urn_from_uri(bindings["?entity"]),
-                   "determiner": "a",
-                   "features": {"number": "plural" if lex.plural_p(lex.urn_from_uri(bindings["?entity"])) else "singular"}},
+        "subject": ent_spec(bindings["?agent"]),
+        "verb": verb_spec(bindings["?activity"]),
+        "object": ent_spec(bindings["?entity"]),
         "features": {"tense":"past"}
     }
 
@@ -83,11 +84,8 @@ def _der_ent_by_act_coverage(bindings, graph):
 def _der_ent_by_act_string(bindings, history):
     
     sentence = {
-        "verb": lex.urn_from_uri(bindings["?activity"]),
-        "object": {"type": "noun_phrase",
-                   "head": lex.urn_from_uri(bindings["?entity"]),
-                   "determiner": "a",
-                   "features": {"number": "plural" if lex.plural_p(lex.urn_from_uri(bindings["?entity"])) else "singular"}},
+        "verb": verb_spec(bindings["?activity"]),
+        "object": ent_spec(bindings["?entity"]),
         "features": {"tense":"past",
                      "passive":"true"}
     }
