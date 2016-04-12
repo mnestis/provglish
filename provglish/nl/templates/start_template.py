@@ -4,6 +4,7 @@ from provglish.lexicalisation import plural_p
 from provglish.prov import PROV
 from provglish.nl.tools import SETTINGS, realise_sentence
 from provglish.nl.lexicalisation import activity_uri_to_noun_phrase_spec as act_spec
+from provglish.nl.lexicalisation import entity_uri_to_noun_phrase_spec as ent_spec
 
 import rdflib
 from rdflib.plugins import sparql
@@ -81,12 +82,12 @@ def _start_string(bindings, history):
             # This is a sentence where we talk about triggering.
             sentence["verb"] = "trigger"
             sentence["object"] = {"type": "noun_phrase",
-                                  "head": "start of %s" % (act_spec(bindings["?activity"]),),
+                                  "head": "start of",
+                                  "modifiers": [act_spec(bindings["?activity"])],
                                   "determiner": "the",
                                   "number": "singular"}
 
-            sentence["subject"] = {"type": "noun_phrase",
-                                   "head": lex(bindings["?trigger"])}
+            sentence["subject"] = ent_spec(bindings["?trigger"])
             
             sentence["features"] = {"tense":"past",
                                     "passive":"true"}
@@ -100,8 +101,7 @@ def _start_string(bindings, history):
                                     "passive": "true"}
 
             if "?starter" in bindings:
-                sentence["subject"] = {"type": "noun_phrase",
-                                       "head": lex(bindings["?starter"])}
+                sentence["subject"] = ent_spec(bindings["?starter"])
 
             if "?time" in bindings:
                 sentence["modifiers"] = [{"type": "preposition_phrase",
@@ -112,10 +112,10 @@ def _start_string(bindings, history):
         # This is an unqualified start
         sentence["verb"] = "trigger"
         sentence["object"] = {"type": "noun_phrase",
-                              "head": "start of %s" % (act_spec(bindings["?activity"]),),
+                              "head": "start of",
+                              "modifiers": [act_spec(bindings["?activity"])],
                               "determiner": "the"}
-        sentence["subject"] = {"type": "noun_phrase",
-                               "head": lex(bindings["?trigger"])}
+        sentence["subject"] = ent_spec(bindings["?trigger"])
         
         sentence["features"] = {"tense":"past",
                                 "passive":"true"}
