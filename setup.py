@@ -25,12 +25,14 @@ setup(
 		"inflect >= 0.2.4",
 		"nltk >= 2.7.6",
 		"nlgserv == 0.2.3",
+                "numpy >= 1.8.2",
 	],
 	requires=[
 		"rdflib (>=4.1.2)",
 		"inflect (>=0.2.4)",
 		"nltk (>=2.7.6)",
 		"nlgserv (==0.2.3)",
+                "numpy (>=1.8.2)",
 	],
         cmdclass={"post_install": post_install},
 )
