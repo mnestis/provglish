@@ -17,8 +17,10 @@ class Transformer():
         prov.load_prov_ontology(graph)
         sentences = self.render_graph(graph)
         sentences_pool = self.remove_dup_coverage(sentences)
-        return self.choose_sentences(sentences_pool)     
-        return sentences_pool
+        chosen_sentences = sentences_pool
+        #chosen_sentences = self.choose_sentences(sentences_pool)     
+        ordered_sentences = self.order_sentences(graph, chosen_sentences)
+        return ordered_sentences
 
     def render_graph(self, graph):
         sentences = []
@@ -77,7 +79,13 @@ class Transformer():
         
         chosen_sentences = [] # A list that will hold the sentences we choose
 
+        previous = len(to_be_covered) + 1
         while to_be_covered:
+            if len(to_be_covered) == previous:
+                print "Breaking due to lack of progress."
+                break
+            else:
+                previous = len(to_be_covered)
             chosen_sentence = self.choose_sentence(to_be_covered, sentences)
             chosen_sentences.append(chosen_sentence)
             for triple in chosen_sentence.coverage:
@@ -95,8 +103,45 @@ class Transformer():
                 # Remove any triples it covers from to_be_covered
                 if triple in to_be_covered:
                     del to_be_covered[triple]
-        
+
+#            if not sentences:
+ #               break
+
         return chosen_sentences
+
+    def order_sentences(self, graph, chosen_sentences, topology_based=True):
+
+        from pprint import pprint
+
+        filtered_graph = filter(lambda a: a[1].startswith("http://www.w3.org/ns/prov#"), list(graph.get_context("prov_graph")))
+      
+        if topology_based:
+            from toposort import toposort, toposort_flatten
+            
+            node_graph = {}
+            for triple in filtered_graph:
+                if triple[0] not in node_graph:
+                    node_graph[triple[0]] = set()
+                if triple[2] not in node_graph[triple[0]]:
+                    node_graph[triple[0]].add(triple[2])
+
+            topological_node_order = list(reversed(toposort_flatten(node_graph)))
+
+            ordered_sentences = []
+
+            for node in topological_node_order:
+                for sentence in chosen_sentences:
+                    if node in map(lambda a: a[0], sentence.coverage):
+                        if sentence not in ordered_sentences:
+                            ordered_sentences.append(sentence)
+                if len(ordered_sentences) == len(chosen_sentences):
+                    return ordered_sentences
+
+            for sentence in chosen_sentences:
+                if sentence not in ordered_sentences:
+                    ordered_sentences.append(sentence)
+
+            return ordered_sentences
 
     def generate_paragraph(self, sentences):
         paragraph = ""
